@@ -1,0 +1,934 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Prakash Academy | Casino AI Dashboard</title>  
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght=500;700&family=Plus+Jakarta+Sans:wght=400;600;800&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  <style>  
+    :root {  
+        --bg-casino: #0d0306;  
+        --surface: rgba(22, 11, 16, 0.75);  
+        --neon-gold: #ffd700;  
+        --neon-cyan: #00f3ff;  
+        --neon-green: #00ffa3;  
+        --neon-pink: #ff0055;  
+        --text-primary: #ffffff;  
+        --text-secondary: #cbd5e1;  
+    }  
+
+    * {  
+        box-sizing: border-box;  
+        font-family: 'Plus Jakarta Sans', sans-serif;  
+        margin: 0;  
+        padding: 0;  
+    }  
+
+    body {  
+        background: var(--bg-casino);  
+        background-image:   
+            radial-gradient(circle at 20% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),  
+            radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 40%),  
+            linear-gradient(135deg, #0f0508 0%, #1a050d 50%, #050002 100%);  
+        color: var(--text-primary);  
+        min-height: 100vh;  
+        display: flex;  
+        justify-content: center;  
+        align-items: center;  
+        overflow-x: hidden;  
+        padding: 20px 10px;  
+    }  
+
+    /* 📱 CORE ANIMATION ENGINE */  
+    @keyframes screenReveal {  
+        0% { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(10px); }  
+        100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }  
+    }  
+
+    @keyframes popupSlideIn {  
+        0% { opacity: 0; transform: translateY(-20px) scale(0.95); }  
+        100% { opacity: 1; transform: translateY(0) scale(1); }  
+    }  
+
+    @keyframes cardEntrance {  
+        0% { opacity: 0; transform: scale(0.7) translateY(40px); filter: brightness(0.5); }  
+        100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }  
+    }  
+
+    @keyframes pulseGlow {  
+        0% { border-color: rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.05); }  
+        100% { border-color: var(--neon-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.25); }  
+    }  
+
+    /* 🚀 PREMIUM LOADING SCREEN */  
+    #splash-screen {  
+        position: fixed;  
+        top: 0; left: 0; width: 100%; height: 100%;  
+        background: #0a0204;  
+        z-index: 9999;  
+        display: flex;  
+        flex-direction: column;  
+        justify-content: center;  
+        align-items: center;  
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);  
+    }  
+
+    .loader-logo {  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 34px;  
+        font-weight: 700;  
+        letter-spacing: 4px;  
+        text-transform: uppercase;  
+        background: linear-gradient(45deg, var(--neon-pink), var(--neon-gold));  
+        -webkit-background-clip: text;  
+        -webkit-text-fill-color: transparent;  
+        margin-bottom: 5px;  
+        filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.5));  
+    }  
+
+    .loader-sub {  
+        font-size: 12px;  
+        color: var(--neon-cyan);  
+        text-transform: uppercase;  
+        letter-spacing: 3px;  
+        margin-bottom: 30px;  
+        font-weight: 600;  
+    }  
+
+    .loader-bar {  
+        width: 220px;  
+        height: 4px;  
+        background: rgba(255,255,255,0.05);  
+        border-radius: 10px;  
+        overflow: hidden;  
+    }  
+
+    .loader-progress {  
+        width: 0%; height: 100%;  
+        background: linear-gradient(90deg, var(--neon-pink), var(--neon-gold));  
+        animation: loadApp 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;  
+    }  
+
+    @keyframes loadApp {  
+        100% { width: 100%; }  
+    }  
+
+    /* 📱 MAIN DASHBOARD UI CONTAINER */  
+    .app-container {  
+        width: 100%;  
+        max-width: 480px;  
+        background: var(--surface);  
+        backdrop-filter: blur(25px);  
+        border-radius: 32px;  
+        padding: 35px 22px;  
+        border: 1px solid rgba(255, 0, 85, 0.15);  
+        box-shadow: 0 30px 70px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.1);  
+        display: none;  
+        opacity: 0;  
+        text-align: center;  
+    }  
+
+    /* 💥 SMOOTH TRANSITION CLASS */  
+    .app-visible {   
+        display: block;  
+        animation: screenReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;  
+    }  
+
+    .brand-title {  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 34px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        letter-spacing: 3px;  
+        background: linear-gradient(90deg, #ffffff, var(--neon-gold), #ffffff);  
+        -webkit-background-clip: text;  
+        -webkit-text-fill-color: transparent;  
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);  
+        margin-bottom: 2px;  
+    }  
+
+    .brand-tag {  
+        font-size: 11px;  
+        text-transform: uppercase;  
+        color: var(--neon-pink);  
+        letter-spacing: 3px;  
+        margin-bottom: 25px;  
+        font-weight: 700;  
+    }  
+
+    .setup-panel {  
+        background: rgba(0, 0, 0, 0.6);  
+        border: 1px solid rgba(255, 0, 85, 0.2);  
+        border-radius: 24px;  
+        padding: 22px 18px;  
+        margin-bottom: 20px;  
+        text-align: left;  
+    }  
+
+    .panel-lbl {  
+        font-size: 11px;  
+        color: var(--text-secondary);  
+        text-transform: uppercase;  
+        letter-spacing: 2px;  
+        margin-bottom: 10px;  
+        display: block;  
+        font-weight: 700;  
+    }  
+
+    .id-input-box, .select-input-box {  
+        background: #0b0407;  
+        border: 2px solid rgba(255, 255, 255, 0.1);  
+        border-radius: 14px;  
+        padding: 14px 20px;  
+        width: 100%;  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 16px;  
+        font-weight: 700;  
+        color: #ffffff;  
+        outline: none;  
+        margin-top: 5px;  
+        margin-bottom: 18px;  
+        letter-spacing: 1px;  
+        transition: all 0.3s ease;  
+    }  
+
+    .id-input-box:focus, .select-input-box:focus {  
+        border-color: var(--neon-cyan);  
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);  
+    }  
+
+    .select-input-box option {  
+        background: #14070c;  
+        color: #fff;  
+    }  
+
+    .pkg-group {  
+        display: flex;  
+        flex-direction: column;  
+        gap: 10px;  
+        margin-top: 8px;  
+    }  
+
+    .pkg-label {  
+        display: flex;  
+        align-items: center;  
+        background: rgba(255, 255, 255, 0.03);  
+        border: 1px solid rgba(255, 255, 255, 0.08);  
+        padding: 12px 15px;  
+        border-radius: 14px;  
+        cursor: pointer;  
+        transition: all 0.2s ease;  
+    }  
+
+    .pkg-label:hover {  
+        background: rgba(255, 215, 0, 0.05);  
+        border-color: rgba(255, 215, 0, 0.3);  
+        transform: translateX(4px);  
+    }  
+
+    .pkg-radio {  
+        appearance: none;  
+        width: 18px;  
+        height: 18px;  
+        border: 2px solid var(--text-secondary);  
+        border-radius: 50%;  
+        margin-right: 14px;  
+        outline: none;  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        transition: 0.2s;  
+        flex-shrink: 0;  
+    }  
+
+    .pkg-radio:checked {  
+        border-color: var(--neon-gold);  
+        background: var(--neon-gold);  
+        box-shadow: 0 0 8px var(--neon-gold);  
+    }  
+
+    .pkg-text {  
+        font-size: 13.5px;  
+        font-weight: 600;  
+        color: #ffffff;  
+    }  
+
+    /* 🎛️ BUTTONS ANIMATIONS */  
+    .action-btn {  
+        width: 100%;  
+        padding: 16px;  
+        border: none;  
+        border-radius: 16px;  
+        font-size: 14px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        letter-spacing: 1.5px;  
+        cursor: pointer;  
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 10px;  
+        margin-top: 5px;  
+    }  
+
+    .action-btn:active {  
+        transform: scale(0.95);  
+    }  
+
+    .btn-prime {  
+        background: linear-gradient(135deg, var(--neon-green) 0%, #00b372 100%);  
+        color: #000;  
+        box-shadow: 0 6px 20px rgba(0, 255, 163, 0.2);  
+    }  
+
+    .btn-prime:hover {  
+        transform: translateY(-3px);  
+        box-shadow: 0 12px 25px rgba(0, 255, 163, 0.45);  
+    }  
+
+    .btn-logout {  
+        background: rgba(255, 255, 255, 0.05);  
+        color: var(--neon-pink);  
+        border: 1px solid rgba(255, 0, 85, 0.3);  
+        margin-top: 15px;  
+    }  
+
+    .btn-logout:hover {  
+        background: rgba(255, 0, 85, 0.15);  
+        box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);  
+        transform: translateY(-2px);  
+    }  
+
+    /* 🛑 STATUS CARD */  
+    .status-card {  
+        background: linear-gradient(135deg, rgba(40, 5, 15, 0.95) 0%, rgba(20, 2, 7, 0.98) 100%);  
+        border: 2px dashed var(--neon-gold);  
+        border-radius: 20px;  
+        padding: 25px 20px;  
+        margin-top: 15px;  
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);  
+        text-align: center;  
+        animation: pulseGlow 2s infinite alternate;  
+    }  
+
+    .status-title {  
+        color: var(--neon-gold);  
+        font-size: 18px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        margin-bottom: 12px;  
+        letter-spacing: 1px;  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 8px;  
+    }  
+
+    .status-desc {  
+        font-size: 14px;  
+        color: #ffffff;  
+        line-height: 1.6;  
+        font-weight: 500;  
+    }  
+
+    .status-time {  
+        display: block;  
+        margin-top: 10px;  
+        color: var(--neon-cyan);  
+        font-weight: 700;  
+        font-family: 'Chakra Petch', sans-serif;  
+        letter-spacing: 1px;  
+    }  
+
+    /* 🏆 APPROVE & REJECT STATUS ALERTS WITH SMOOTH SLIDE-IN */  
+    .alert-popup {  
+        background: linear-gradient(135deg, rgba(13, 36, 27, 0.95) 0%, rgba(5, 15, 11, 0.98) 100%);  
+        border: 2px solid var(--neon-green);  
+        border-radius: 20px;  
+        padding: 22px 18px;  
+        margin-bottom: 20px;  
+        box-shadow: 0 0 30px rgba(0, 255, 163, 0.2);  
+        text-align: center;  
+        animation: popupSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;  
+    }  
+
+    .alert-popup.reject {  
+        background: linear-gradient(135deg, rgba(40, 5, 15, 0.95) 0%, rgba(20, 2, 7, 0.98) 100%);  
+        border: 2px solid var(--neon-pink);  
+        box-shadow: 0 0 30px rgba(255, 0, 85, 0.2);  
+    }  
+
+    .alert-title {  
+        font-size: 18px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        margin-bottom: 8px;  
+        letter-spacing: 1px;  
+    }  
+
+    .alert-title.approved { color: var(--neon-green); }  
+    .alert-title.rejected { color: var(--neon-pink); }  
+
+    .alert-desc {  
+        font-size: 13.5px;  
+        color: #ffffff;  
+        line-height: 1.5;  
+        font-weight: 500;  
+    }  
+
+    .btn-close-alert {  
+        background: rgba(255, 255, 255, 0.08);  
+        border: 1px solid rgba(255, 255, 255, 0.1);  
+        color: #fff;  
+        padding: 8px 16px;  
+        border-radius: 10px;  
+        font-size: 12px;  
+        font-weight: 700;  
+        cursor: pointer;  
+        margin-top: 15px;  
+        transition: all 0.2s ease;  
+    }  
+    .btn-close-alert:hover {  
+        background: #ffffff;  
+        color: #000;  
+        transform: scale(1.05);  
+    }  
+
+    /* 🎛️ MAIN APP (SIGNALS VIEW) */  
+    .input-panel {  
+        background: rgba(0, 0, 0, 0.5);  
+        border-radius: 20px;  
+        padding: 18px;  
+        border: 1px solid rgba(255, 215, 0, 0.1);  
+        margin-bottom: 20px;  
+    }  
+
+    .odd-num-box {  
+        background: #0b0407;  
+        border: 2px solid rgba(255, 255, 255, 0.08);  
+        border-radius: 14px;  
+        padding: 8px 15px;  
+        width: 130px;  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 24px;  
+        font-weight: 700;  
+        color: var(--neon-gold);  
+        text-align: center;  
+        outline: none;  
+    }  
+
+    .btn-wrapper {  
+        display: flex;  
+        gap: 10px;  
+        margin-bottom: 20px;  
+    }  
+
+    .btn-sec {  
+        background: rgba(255, 255, 255, 0.03);  
+        color: #ff3366;  
+        border: 1px solid rgba(255, 51, 102, 0.2);  
+    }  
+    .btn-sec:hover {  
+        background: rgba(255, 51, 102, 0.15);  
+        transform: translateY(-2px);  
+    }  
+
+    .cards-grid {  
+        display: grid;  
+        grid-template-columns: repeat(2, 1fr);  
+        gap: 14px;  
+        margin-bottom: 20px;  
+    }  
+
+    /* 🎰 CARDS ENTRANCE TRANSITION EFFECT */  
+    .sig-card {  
+        background: linear-gradient(135deg, rgba(30, 15, 22, 0.8) 0%, rgba(15, 5, 10, 0.9) 100%);  
+        border: 1px solid rgba(255, 255, 255, 0.04);  
+        border-radius: 20px;  
+        padding: 18px 12px;  
+        text-align: center;  
+        border-left: 3px solid var(--neon-pink);  
+        opacity: 0;  
+        animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;  
+    }  
+
+    .card-id { font-size: 10px; color: var(--text-secondary); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }  
+    .card-time { font-family: 'Chakra Petch', sans-serif; font-size: 14px; font-weight: 700; color: var(--neon-cyan); background: rgba(0, 243, 255, 0.08); padding: 2px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }  
+    .card-odd { font-family: 'Chakra Petch', sans-serif; font-size: 30px; font-weight: 700; color: var(--neon-green); margin: 2px 0; text-shadow: 0 0 10px rgba(0, 255, 163, 0.2); }  
+    .card-accuracy { font-size: 11px; color: var(--neon-gold); background: rgba(255, 215, 0, 0.08); padding: 3px 8px; border-radius: 30px; display: inline-block; margin-bottom: 12px; font-weight: 600; }  
+
+    .copy-btn {  
+        width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;  
+    }  
+    .copy-btn:hover { background: var(--neon-pink); color: #fff; border-color: var(--neon-pink); transform: scale(1.03); }  
+
+    .btn-copy-all {  
+        width: 100%; padding: 16px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #000; border: none; border-radius: 16px; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 25px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
+        animation: popupSlideIn 0.4s ease forwards;  
+    }  
+    .btn-copy-all:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4); }  
+
+    .empty-view { grid-column: span 2; text-align: center; padding: 40px 10px; color: var(--text-secondary); font-size: 13px; border: 1px dashed rgba(255,255,255,0.06); border-radius: 20px; }  
+
+    .footer-box {  
+        background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 12px; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-top: 5px;  
+    }  
+    .footer-box span { color: var(--neon-gold); text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }  
+
+    /* 📡 PREMIUM SUB-CARD TELEGRAM BUTTON */  
+    .tg-channel-card {  
+        background: rgba(0, 136, 204, 0.06);  
+        border: 1px dashed rgba(0, 140, 255, 0.4);  
+        border-radius: 16px;  
+        padding: 12px;  
+        margin: 15px 0;  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+    }  
+    .tg-inline-btn {  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 10px;  
+        width: 100%;  
+        padding: 12px 20px;  
+        background: linear-gradient(135deg, #0088cc 0%, #006699 100%);  
+        color: #ffffff;  
+        font-family: 'Plus Jakarta Sans', sans-serif;  
+        font-size: 13.5px;  
+        font-weight: 700;  
+        text-transform: uppercase;  
+        letter-spacing: 1px;  
+        text-decoration: none;  
+        border-radius: 12px;  
+        box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2);  
+        transition: all 0.3s ease;  
+    }  
+    .tg-inline-btn:hover {  
+        transform: translateY(-2px);  
+        box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);  
+        background: linear-gradient(135deg, #0099ff 0%, #0077cc 100%);  
+    }  
+</style>
+
+</head>  
+<body>  <!-- Loading Screen -->  <div id="splash-screen">  
+    <div class="loader-logo">PRAKASH ACADEMY</div>  
+    <div class="loader-sub">Casino AI Signals Engine</div>  
+    <div class="loader-bar"><div class="loader-progress"></div></div>  
+</div>  <!-- Form & Pending Panel Layout -->  <div class="app-container" id="activationApp">  
+    <div class="brand-title">PRAKASH ACADEMY</div>  
+    <div class="brand-tag">🎰 CASINO INTEGRATION SYSTEM 🎰</div>  <!-- One-time Rejected Notification -->  
+<div class="alert-popup reject" id="oneTimeRejectAlert" style="display: none;">  
+    <div class="alert-title rejected"><i class="fa-solid fa-circle-xmark"></i> Request Rejected</div>  
+    <div class="alert-desc">කණගාටුයි! ඔබගේ ඇක්ටිවේෂන් ඉල්ලීම ඇඩ්මින් විසින් ප්‍රතික්ෂේප කර ඇත. කරුණාකර නිවැරදි තොරතුරු ඇතුළත් කර නැවත උත්සාහ කරන්න.</div>  
+    <button class="btn-close-alert" onclick="dismissAlert('oneTimeRejectAlert')">Dismiss Notice</button>  
+</div>  
+
+<!-- 1. Input Form Block -->  
+<div class="setup-panel" id="requestFormSection">  
+    <span class="panel-lbl"><i class="fa-solid fa-fingerprint"></i> Enter Game Player ID</span>  
+    <input type="text" id="playerGameId" class="id-input-box" placeholder="e.g. 87654321" autocomplete="off">  
+      
+    <span class="panel-lbl"><i class="fa-solid fa-gamepad"></i> Select Your Betting Site</span>  
+    <select id="bettingSite" class="select-input-box">  
+        <option value="" disabled selected>-- Choose Platform --</option>  
+        <option value="1xBet">1xBet</option>  
+        <option value="LuckyPari">LuckyPari</option>  
+        <option value="MelBet">MelBet</option>  
+        <option value="Megapari">Megapari</option>  
+        <option value="LineBet">LineBet</option>  
+    </select>  
+
+    <span class="panel-lbl"><i class="fa-solid fa-box-open"></i> Choose Preferred AI Package</span>  
+    <div class="pkg-group">  
+        <label class="pkg-label">  
+            <input type="radio" name="academyPkg" value="Weekly Package" class="pkg-radio" checked>  
+            <span class="pkg-text">Weekly Package</span>  
+        </label>  
+        <label class="pkg-label">  
+            <input type="radio" name="academyPkg" value="Monthly Package" class="pkg-radio">  
+            <span class="pkg-text">Monthly Package</span>  
+        </label>  
+        <label class="pkg-label">  
+            <input type="radio" name="academyPkg" value="Lifetime Package" class="pkg-radio">  
+            <span class="pkg-text">Lifetime Package</span>  
+        </label>  
+        <label class="pkg-label">  
+            <input type="radio" name="academyPkg" value="Deposit Offer Package (Rs.5000+)" class="pkg-radio">  
+            <span class="pkg-text">Deposit Offer Package (Rs. 5000+)</span>  
+        </label>  
+    </div>  
+      
+    <div style="margin-top: 20px;">  
+        <button class="action-btn btn-prime" id="requestBtn" onclick="submitActivationRequest()">  
+            <i class="fa-solid fa-paper-plane"></i> Request Activation  
+        </button>  
+    </div>  
+</div>  
+
+<!-- 2. Admin Review Pending Card -->  
+<div id="pendingStatusWrapper" style="display: none;">  
+    <div class="status-card">  
+        <div class="status-title">  
+            <i class="fa-solid fa-hourglass-half fa-spin"></i> Request Pending  
+        </div>  
+        <div class="status-desc">  
+            ඔබගේ ID එක ඇඩ්මින් (Admin) වෙත සාර්ථකව යොමු කරන ලදී. ඇඩ්මින් විසින් පරීක්ෂා කර ID එක සක්‍රිය කරන තෙක් කරුණාකර රැඳී සිටින්න.  
+            <span class="status-time"><i class="fa-solid fa-clock"></i> පැය 1 - 3 ත් අතර කාලයකදී සක්‍රිය වේ.</span>  
+        </div>  
+    </div>  
+    <button class="action-btn btn-logout" onclick="logoutSystem()">  
+        <i class="fa-solid fa-right-from-bracket"></i> Logout From System  
+    </button>  
+</div>  
+
+<!-- 📢 TELEGRAM CHANNEL CARD LINK -->  
+<div class="tg-channel-card">  
+    <a href="https://t.me/Aviator_Signel_Prakash_Academy" target="_blank" class="tg-inline-btn">  
+        <i class="fa-brands fa-telegram" style="font-size: 18px;"></i> Join Our Telegram Channel  
+    </a>  
+</div>  
+
+<div class="footer-box">Powered by <span>Prakash Academy</span></div>
+
+</div>  <!-- 🎛️ MAIN APP DASHBOARD (FOR ACTIVE USERS / 123456 BYPASS) -->  <div class="app-container" id="mainApp">  
+    <div class="brand-title">PRAKASH ACADEMY</div>  
+    <div class="brand-tag">🎰 CASINO AVIATOR PRO 🎰</div>  <!-- One-time Approved Notification -->  
+<div class="alert-popup" id="oneTimeApproveAlert" style="display: none;">  
+    <div class="alert-title approved"><i class="fa-solid fa-circle-check"></i> Request Approved</div>  
+    <div class="alert-desc">ඔබගේ ඇක්ටිවේෂන් ඉල්ලීම ඇඩ්මින් විසින් සාර්ථකව අනුමත කර ඇත! දැන් ඔබටසිග්නල් ලබා ගත හැක.</div>  
+    <button class="btn-close-alert" onclick="dismissAlert('oneTimeApproveAlert')">Dismiss Notice</button>  
+</div>  
+
+<div class="input-panel">  
+    <span class="panel-lbl">Last Peak Odd Box</span>  
+    <div>  
+        <input type="number" id="peakOddVal" class="odd-num-box" value="23.00" step="0.01">  
+        <span style="font-size:20px; color:var(--neon-gold); font-weight:bold; margin-left:5px;">X</span>  
+    </div>  
+</div>  
+
+<div class="btn-wrapper">  
+    <button class="action-btn btn-prime" onclick="generatePremiumGrid()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Signals</button>  
+    <button class="action-btn btn-sec" onclick="clearPremiumGrid()"><i class="fa-solid fa-trash-can"></i> Clear All</button>  
+</div>  
+
+<div class="cards-grid" id="gridDisplay">  
+    <div class="empty-view">Set Peak Odd & Click Generate to deploy.</div>  
+</div>  
+
+<button class="btn-copy-all" id="copyAllBtn" onclick="copyAllSignalsTogether()" style="display: none;">  
+    <i class="fa-solid fa-copy"></i> ... COPY ALL 4 SIGNALS TOGETHER ...  
+</button>  
+
+<button class="action-btn btn-logout" onclick="logoutSystem()" style="margin-bottom: 20px;">  
+    <i class="fa-solid fa-right-from-bracket"></i> Logout Session  
+</button>  
+
+<!-- 📢 TELEGRAM CHANNEL CARD LINK -->  
+<div class="tg-channel-card">  
+    <a href="https://t.me/Aviator_Signel_Prakash_Academy" target="_blank" class="tg-inline-btn">  
+        <i class="fa-brands fa-telegram" style="font-size: 18px;"></i> Join Our Telegram Channel  
+    </a>  
+</div>  
+
+<div class="footer-box">Powered by <span>Prakash Academy</span></div>
+
+</div>  <script>  
+    // --- TELEGRAM BOT CONFIGURATION ---  
+    const TG_BOT_TOKEN = "8778172956:AAEJ0b2D9OuUJdELrQx9ovaehm4StCnik3s";  
+    const ADMIN_CHAT_ID = "8778172956"; // ✅ Prakashගේ Chat ID එක සාර්ථකව සම්බන්ධ කරන ලදී!  
+  
+    let generatedSignalsList = [];  
+    let savedPlayerId = "";  
+    let savedPackage = "";  
+    let lastUpdateId = 0;   
+  
+    window.addEventListener('DOMContentLoaded', () => {  
+        setTimeout(() => {  
+            document.getElementById('splash-screen').style.opacity = '0';  
+            setTimeout(() => {  
+                document.getElementById('splash-screen').style.display = 'none';  
+            }, 600);  
+        }, 2500);  
+  
+        checkRealtimeStatus();  
+    });  
+  
+    function checkRealtimeStatus() {  
+        let appState = localStorage.getItem('prakash_academy_session');  
+        savedPlayerId = localStorage.getItem('prakash_player_id') || "";  
+        savedPackage = localStorage.getItem('prakash_package') || "";  
+  
+        if (appState === 'active') {  
+            document.getElementById('activationApp').style.display = 'none';  
+            document.getElementById('mainApp').classList.add('app-visible');  
+            if (!localStorage.getItem('approve_alert_shown')) {  
+                document.getElementById('oneTimeApproveAlert').style.display = 'block';  
+            }  
+        } else if (appState === 'pending') {  
+            document.getElementById('requestFormSection').style.display = 'none';  
+            document.getElementById('pendingStatusWrapper').style.display = 'block';  
+            document.getElementById('activationApp').classList.add('app-visible');  
+              
+            fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getUpdates?offset=-1`)  
+            .then(res => res.json())  
+            .then(data => {  
+                if(data.ok && data.result.length > 0) {  
+                    lastUpdateId = data.result[0].update_id;  
+                }  
+                fetchTelegramUpdates();  
+            }).catch(() => fetchTelegramUpdates());  
+              
+        } else if (appState === 'rejected') {  
+            document.getElementById('requestFormSection').style.display = 'block';  
+            document.getElementById('pendingStatusWrapper').style.display = 'none';  
+            document.getElementById('activationApp').classList.add('app-visible');  
+            if (!localStorage.getItem('reject_alert_shown')) {  
+                document.getElementById('oneTimeRejectAlert').style.display = 'block';  
+            }  
+        } else {  
+            document.getElementById('activationApp').classList.add('app-visible');  
+        }  
+    }  
+  
+    function sendRequestToTelegram(playerId, platform, packageChosen) {  
+        const textMessage = `👑 *NEW ACTIVATION REQUEST* 👑\n\n👤 *Player ID:* \`${playerId}\`\n🌐 *Platform:* ${platform}\n📦 *Package:* ${packageChosen}\n\nSelect action to configure status dynamically:`;  
+          
+        const inlineKeyboard = {  
+            inline_keyboard: [  
+                [  
+                    { text: "✅ Approve User", callback_data: `approve_${playerId}` },  
+                    { text: "❌ Reject User", callback_data: `reject_${playerId}` }  
+                ]  
+            ]  
+        };  
+  
+        fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {  
+            method: 'POST',  
+            headers: { 'Content-Type': 'application/json' },  
+            body: JSON.stringify({  
+                chat_id: ADMIN_CHAT_ID,  
+                text: textMessage,  
+                parse_mode: 'Markdown',  
+                reply_markup: inlineKeyboard  
+            })  
+        }).catch(err => console.error("Telegram Transmission Error:", err));  
+    }  
+  
+    function fetchTelegramUpdates() {  
+        if (localStorage.getItem('prakash_academy_session') !== 'pending') return;  
+  
+        let offsetParam = lastUpdateId ? `&offset=${lastUpdateId + 1}` : '';  
+  
+        fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getUpdates?timeout=5${offsetParam}`)  
+        .then(res => res.json())  
+        .then(data => {  
+            if (data.ok && data.result.length > 0) {  
+                data.result.forEach(update => {  
+                    lastUpdateId = update.update_id;  
+                      
+                    if (update.callback_query) {  
+                        const actionData = update.callback_query.data;  
+                        const targetedId = actionData.split('_')[1];  
+                        const currentCachedId = localStorage.getItem('prakash_player_id');  
+  
+                        if (targetedId === currentCachedId) {  
+                            fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/answerCallbackQuery`, {  
+                                method: 'POST',  
+                                headers: { 'Content-Type': 'application/json' },  
+                                body: JSON.stringify({ callback_query_id: update.callback_query.id, text: "Status Updated!" })  
+                            });  
+  
+                            if (actionData.startsWith('approve')) {  
+                                localStorage.setItem('prakash_academy_session', 'active');  
+                                localStorage.removeItem('reject_alert_shown');  
+                                location.reload();   
+                            } else if (actionData.startsWith('reject')) {  
+                                localStorage.setItem('prakash_academy_session', 'rejected');  
+                                localStorage.removeItem('approve_alert_shown');  
+                                location.reload();  
+                            }  
+                        }  
+                    }  
+                });  
+            }  
+            setTimeout(fetchTelegramUpdates, 3000);  
+        }).catch(() => {  
+            setTimeout(fetchTelegramUpdates, 4000);  
+        });  
+    }  
+  
+    function dismissAlert(alertId) {  
+        const alertEl = document.getElementById(alertId);  
+        alertEl.style.transition = "all 0.4s ease";  
+        alertEl.style.opacity = "0";  
+        alertEl.style.transform = "translateY(-15px) scale(0.9)";  
+        setTimeout(() => {  
+            alertEl.style.display = 'none';  
+            if (alertId === 'oneTimeApproveAlert') {  
+                localStorage.setItem('approve_alert_shown', 'true');  
+            } else if (alertId === 'oneTimeRejectAlert') {  
+                localStorage.setItem('reject_alert_shown', 'true');  
+            }  
+        }, 400);  
+    }  
+  
+    function submitActivationRequest() {  
+        const idInput = document.getElementById('playerGameId').value.trim();  
+        const siteInput = document.getElementById('bettingSite').value;  
+        const selectedRadio = document.querySelector('input[name="academyPkg"]:checked');  
+          
+        if(idInput === "") { alert("Please enter a valid Player ID!"); return; }  
+        if(!siteInput) { alert("Please select your Betting Site!"); return; }  
+  
+        const pkgValue = selectedRadio ? selectedRadio.value : "Weekly Package";  
+        const requestBtn = document.getElementById('requestBtn');  
+        requestBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';  
+        requestBtn.disabled = true;  
+  
+        setTimeout(() => {  
+            savedPlayerId = idInput;  
+            savedPackage = pkgValue;  
+            localStorage.setItem('prakash_player_id', idInput);  
+            localStorage.setItem('prakash_package', pkgValue);  
+  
+            document.getElementById('activationApp').classList.remove('app-visible');  
+  
+            setTimeout(() => {  
+                // Developer Secret Bypass Mode  
+                if (idInput === "123456" && siteInput === "1xBet" && pkgValue === "Weekly Package") {  
+                    localStorage.setItem('prakash_academy_session', 'active');  
+                    document.getElementById('activationApp').style.display = 'none';  
+                    document.getElementById('mainApp').classList.add('app-visible');  
+                } else {  
+                    sendRequestToTelegram(idInput, siteInput, pkgValue);  
+  
+                    localStorage.setItem('prakash_academy_session', 'pending');  
+                    document.getElementById('requestFormSection').style.display = 'none';  
+                    document.getElementById('pendingStatusWrapper').style.display = 'block';  
+                    document.getElementById('activationApp').classList.add('app-visible');  
+                      
+                    fetchTelegramUpdates();  
+                }  
+                requestBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Request Activation';  
+                requestBtn.disabled = false;  
+            }, 200);  
+        }, 1500);  
+    }  
+  
+    function logoutSystem() {  
+        if(confirm("Are you sure you want to logout? This will reset session state status.")) {  
+            document.getElementById('mainApp').classList.remove('app-visible');  
+            document.getElementById('activationApp').classList.remove('app-visible');  
+  
+            setTimeout(() => {  
+                localStorage.removeItem('prakash_academy_session');  
+                localStorage.removeItem('prakash_player_id');  
+                localStorage.removeItem('prakash_package');  
+                localStorage.removeItem('approve_alert_shown');  
+                localStorage.removeItem('reject_alert_shown');  
+                  
+                document.getElementById('mainApp').style.display = 'none';  
+                document.getElementById('pendingStatusWrapper').style.display = 'none';  
+                document.getElementById('oneTimeApproveAlert').style.display = 'none';  
+                document.getElementById('oneTimeRejectAlert').style.display = 'none';  
+                  
+                document.getElementById('playerGameId').value = "";  
+                document.getElementById('bettingSite').selectedIndex = 0;  
+                document.getElementById('requestFormSection').style.display = 'block';  
+                document.getElementById('activationApp').style.display = 'block';  
+                document.getElementById('activationApp').classList.add('app-visible');  
+            }, 300);  
+        }  
+    }  
+  
+    // --- Signals Engine Layout ---  
+    function generatePremiumGrid() {  
+        const display = document.getElementById('gridDisplay');  
+        const inputOdd = parseFloat(document.getElementById('peakOddVal').value) || 23.00;  
+          
+        display.innerHTML = "";   
+        generatedSignalsList = [];   
+        let baseTime = new Date();  
+  
+        for (let i = 1; i <= 4; i++) {  
+            let variance = 0.35 + (Math.random() * 0.75);  
+            let finalTargetOdd = (3.25 + (inputOdd * variance * 0.19)).toFixed(2);  
+            let matchPercentage = Math.floor(90 + Math.random() * 10);  
+            let delayTime = (i * 0.12) + 's';   
+  
+            baseTime.setMinutes(baseTime.getMinutes() + Math.floor(2 + Math.random() * 3));  
+            let hours = String(baseTime.getHours()).padStart(2, '0');  
+            let minutes = String(baseTime.getMinutes()).padStart(2, '0');  
+            let formattedTime = `${hours}:${minutes}`;  
+  
+            generatedSignalsList.push({ id: i, time: formattedTime, odd: finalTargetOdd, accuracy: matchPercentage });  
+  
+            display.innerHTML += `  
+                <div class="sig-card" style="animation-delay: ${delayTime}">  
+                    <div class="card-id">⚡ SIGNAL 0${i}</div>  
+                    <div class="card-time"><i class="fa-solid fa-clock"></i> ${formattedTime}</div>  
+                    <div class="card-odd">${finalTargetOdd}x</div>  
+                    <div class="card-accuracy">🔥 ${matchPercentage}% Sure</div>  
+                    <button class="copy-btn" onclick="copyIndividualSignal(${i}, '${formattedTime}', '${finalTargetOdd}', ${matchPercentage})">  
+                        <i class="fa-solid fa-copy"></i> Copy Box 0${i}  
+                    </button>  
+                </div>  
+            `;  
+        }  
+        document.getElementById('copyAllBtn').style.display = 'flex';  
+    }  
+  
+    function fallbackCopyTextToClipboard(text, successCallback) {  
+        const textArea = document.createElement("textarea");  
+        textArea.value = text;  
+        textArea.style.position = "fixed"; textArea.style.opacity = "0";  
+        document.body.appendChild(textArea);  
+        textArea.focus(); textArea.select();  
+        try { if(document.execCommand('copy')) successCallback(); } catch (err) {}  
+        document.body.removeChild(textArea);  
+    }  
+  
+    function smartClipboardCopy(text, successCallback) {  
+        if (!navigator.clipboard) { fallbackCopyTextToClipboard(text, successCallback); return; }  
+        navigator.clipboard.writeText(text).then(successCallback, () => fallbackCopyTextToClipboard(text, successCallback));  
+    }  
+  
+    function copyIndividualSignal(id, time, odd, confidence) {  
+        const text = `🚨 *PRAKASH ACADEMY CASINO* 🚨\n\n👤 *Player ID:* ${savedPlayerId}\n📦 *Package:* ${savedPackage}\n\n🎯 *Signal Box:* 0${id}\n⏰ *Time:* ${time}\n📈 *Target Odd:* ${odd}x\n🔮 *AI Confidence:* ${confidence}%\n\n🚀 _Join Prakash Premium Channels for stable wins!_`;  
+        smartClipboardCopy(text, function() {  
+            const buttons = document.querySelectorAll('.copy-btn');  
+            const currentBtn = buttons[id - 1];  
+            const oldText = currentBtn.innerHTML;  
+            currentBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';  
+            currentBtn.style.background = "#00ffa3"; currentBtn.style.color = "#000";  
+            setTimeout(() => { currentBtn.innerHTML = oldText; currentBtn.style.background = ""; currentBtn.style.color = ""; }, 1500);  
+        });  
+    }  
+  
+    function copyAllSignalsTogether() {  
+        if(generatedSignalsList.length === 0) return;  
+        let bulkText = `👑 *PRAKASH ACADEMY PREMIUM SIGNALS* 👑\n🎰 *CASINO AVIATOR EXPERT AI* 🎰\n\n👤 *Player ID:* ${savedPlayerId}\n📦 *Activated Pkg:* ${savedPackage}\n\n=========================\n`;  
+        generatedSignalsList.forEach(sig => {  
+            bulkText += `🚀 *SIGNAL 0${sig.id}* 🚀\n⏰ Time: ${sig.time}\n📈 Target Odd: ${sig.odd}x\n🔥 Confidence: ${sig.accuracy}%\n=========================\n`;  
+        });  
+        bulkText += `⚠️ _Bet Responsibly! Powered by Prakash Academy._`;  
+          
+        smartClipboardCopy(bulkText, function() {  
+            const allBtn = document.getElementById('copyAllBtn');  
+            allBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ALL SIGNALS COPIED SUCCESSFULLY!';  
+            allBtn.style.background = "#00ffa3"; allBtn.style.color = "#000";  
+            setTimeout(() => { allBtn.innerHTML = '<i class="fa-solid fa-copy"></i> ... COPY ALL 4 SIGNALS TOGETHER ...'; allBtn.style.background = ""; allBtn.style.color = ""; }, 2000);  
+        });  
+    }  
+  
+    function clearPremiumGrid() {  
+        document.getElementById('gridDisplay').innerHTML = `<div class="empty-view">Set Peak Odd & Click Generate to deploy.</div>`;  
+        document.getElementById('copyAllBtn').style.display = 'none';  
+        generatedSignalsList = [];  
+    }  
+</script>  </body>  
+</html>
