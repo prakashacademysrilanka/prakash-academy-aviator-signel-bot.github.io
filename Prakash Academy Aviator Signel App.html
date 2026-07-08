@@ -1,0 +1,922 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Prakash Academy | Casino AI Dashboard</title>  
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght=500;700&family=Plus+Jakarta+Sans:wght=400;600;800&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+<style>  
+    :root {  
+        --bg-casino: #0d0306;  
+        --surface: rgba(22, 11, 16, 0.85);  
+        --neon-gold: #ffd700;  
+        --neon-cyan: #00f3ff;  
+        --neon-green: #00ffa3;  
+        --neon-pink: #ff0055;  
+        --text-primary: #ffffff;  
+        --text-secondary: #cbd5e1;  
+    }  
+
+    * {  
+        box-sizing: border-box;  
+        font-family: 'Plus Jakarta Sans', sans-serif;  
+        margin: 0;  
+        padding: 0;  
+    }  
+
+    body {  
+        background: var(--bg-casino);  
+        background-image:   
+            radial-gradient(circle at 20% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),  
+            radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 40%),  
+            linear-gradient(135deg, #0f0508 0%, #1a050d 50%, #050002 100%);  
+        color: var(--text-primary);  
+        min-height: 100vh;  
+        display: flex;  
+        justify-content: center;  
+        align-items: center;  
+        overflow-x: hidden;  
+        padding: 20px 10px;  
+    }  
+
+    @keyframes screenReveal {  
+        0% { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(10px); }  
+        100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }  
+    }  
+
+    @keyframes popupSlideIn {  
+        0% { opacity: 0; transform: translateY(-20px) scale(0.95); }  
+        100% { opacity: 1; transform: translateY(0) scale(1); }  
+    }  
+
+    @keyframes cardEntrance {  
+        0% { opacity: 0; transform: scale(0.7) translateY(40px); filter: brightness(0.5); }  
+        100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }  
+    }  
+
+    #splash-screen {  
+        position: fixed;  
+        top: 0; left: 0; width: 100%; height: 100%;  
+        background: #0a0204;  
+        z-index: 9999;  
+        display: flex;  
+        flex-direction: column;  
+        justify-content: center;  
+        align-items: center;  
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);  
+    }  
+
+    .loader-logo {  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 34px;  
+        font-weight: 700;  
+        letter-spacing: 4px;  
+        text-transform: uppercase;  
+        background: linear-gradient(45deg, var(--neon-pink), var(--neon-gold));  
+        -webkit-background-clip: text;  
+        -webkit-text-fill-color: transparent;  
+        margin-bottom: 5px;  
+        filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.5));  
+    }  
+
+    .loader-sub {  
+        font-size: 12px;  
+        color: var(--neon-cyan);  
+        text-transform: uppercase;  
+        letter-spacing: 3px;  
+        margin-bottom: 30px;  
+        font-weight: 600;  
+    }  
+
+    .loader-bar {  
+        width: 220px;  
+        height: 4px;  
+        background: rgba(255,255,255,0.05);  
+        border-radius: 10px;  
+        overflow: hidden;  
+    }  
+
+    .loader-progress {  
+        width: 0%; height: 100%;  
+        background: linear-gradient(90deg, var(--neon-pink), var(--neon-gold));  
+        animation: loadApp 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;  
+    }  
+
+    @keyframes loadApp { 100% { width: 100%; } }  
+
+    .app-container {  
+        width: 100%;  
+        max-width: 480px;  
+        background: var(--surface);  
+        backdrop-filter: blur(25px);  
+        border-radius: 32px;  
+        padding: 25px 20px;  
+        border: 1px solid rgba(255, 0, 85, 0.15);  
+        box-shadow: 0 30px 70px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.1);  
+        display: none;  
+        opacity: 0;  
+        text-align: center;  
+        position: relative;  
+    }  
+
+    .app-visible {   
+        display: block;  
+        animation: screenReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;  
+    }  
+
+    .top-bar {  
+        display: flex;  
+        justify-content: space-between;  
+        align-items: center;  
+        margin-bottom: 15px;  
+        gap: 10px;  
+    }  
+
+    .user-welcome-badge {  
+        text-align: left;  
+        font-size: 11px;  
+        font-weight: 700;  
+        max-width: 180px;  
+        overflow: hidden;  
+        text-overflow: ellipsis;  
+        white-space: nowrap;  
+    }  
+
+    .top-btn {  
+        background: rgba(255, 255, 255, 0.05);  
+        border: 1px solid rgba(255, 255, 255, 0.1);  
+        color: #fff;  
+        width: 38px;  
+        height: 38px;  
+        border-radius: 50%;  
+        cursor: pointer;  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        transition: all 0.3s;  
+        flex-shrink: 0;  
+    }  
+    .top-btn:hover {  
+        background: var(--neon-pink);  
+        box-shadow: 0 0 10px var(--neon-pink);  
+    }  
+
+    .brand-title {  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 26px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        letter-spacing: 2px;  
+        background: linear-gradient(90deg, #ffffff, var(--neon-gold), #ffffff);  
+        -webkit-background-clip: text;  
+        -webkit-text-fill-color: transparent;  
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);  
+    }  
+
+    .brand-tag {  
+        font-size: 11px;  
+        text-transform: uppercase;  
+        color: var(--neon-pink);  
+        letter-spacing: 3px;  
+        margin-bottom: 20px;  
+        font-weight: 700;  
+    }  
+
+    .setup-panel {  
+        background: rgba(0, 0, 0, 0.6);  
+        border: 1px solid rgba(255, 0, 85, 0.2);  
+        border-radius: 24px;  
+        padding: 22px 18px;  
+        margin-bottom: 20px;  
+        text-align: left;  
+    }  
+
+    .panel-lbl {  
+        font-size: 11px;  
+        color: var(--text-secondary);  
+        text-transform: uppercase;  
+        letter-spacing: 2px;  
+        margin-bottom: 5px;  
+        display: block;  
+        font-weight: 700;  
+    }  
+
+    .id-input-box, .select-input-box, .form-field-input {  
+        background: #0b0407;  
+        border: 2px solid rgba(255, 255, 255, 0.1);  
+        border-radius: 14px;  
+        padding: 12px 18px;  
+        width: 100%;  
+        font-family: 'Plus Jakarta Sans', sans-serif;  
+        font-size: 14px;  
+        font-weight: 700;  
+        color: #ffffff;  
+        outline: none;  
+        margin-top: 4px;  
+        margin-bottom: 15px;  
+        transition: all 0.3s ease;  
+    }  
+
+    .id-input-box:focus, .select-input-box:focus, .form-field-input:focus {  
+        border-color: var(--neon-cyan);  
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);  
+    }  
+
+    .select-input-box {  
+        cursor: pointer;  
+        appearance: none;  
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");  
+        background-repeat: no-repeat;  
+        background-position: right 20px center;  
+        background-size: 16px;  
+    }  
+
+    .select-input-box option { background: #14070c; color: #fff; }  
+
+    .action-btn {  
+        width: 100%;  
+        padding: 16px;  
+        border: none;  
+        border-radius: 16px;  
+        font-size: 14px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        letter-spacing: 1.5px;  
+        cursor: pointer;  
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 10px;  
+    }  
+    .action-btn:active { transform: scale(0.95); }  
+
+    .btn-prime {  
+        background: linear-gradient(135deg, var(--neon-green) 0%, #00b372 100%);  
+        color: #000;  
+        box-shadow: 0 6px 20px rgba(0, 255, 163, 0.2);  
+    }  
+    .btn-prime:hover {  
+        transform: translateY(-3px);  
+        box-shadow: 0 12px 25px rgba(0, 255, 163, 0.45);  
+    }  
+
+    .btn-logout {  
+        background: rgba(255, 255, 255, 0.05);  
+        color: var(--neon-pink);  
+        border: 1px solid rgba(255, 0, 85, 0.3);  
+        margin-top: 15px;  
+    }  
+
+    /* 🚨 ALERT NOTIFICATION */  
+    .alert-popup {  
+        background: linear-gradient(135deg, rgba(40, 5, 15, 0.98) 0%, rgba(20, 2, 7, 0.99) 100%);  
+        border: 2px solid var(--neon-pink);  
+        border-radius: 20px;  
+        padding: 20px 15px;  
+        margin-bottom: 20px;  
+        box-shadow: 0 0 30px rgba(255, 0, 85, 0.3);  
+        text-align: center;  
+        animation: popupSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;  
+    }  
+    .alert-title { font-size: 16px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; color: var(--neon-pink); display: flex; align-items: center; justify-content: center; gap: 8px; }  
+    .alert-desc { font-size: 13px; color: #ffffff; line-height: 1.5; font-weight: 500; }  
+
+    /* 🔄 LOADING OVERLAY */  
+    .verify-loading-screen {  
+        display: none;  
+        position: absolute;  
+        top: 0; left: 0; width: 100%; height: 100%;  
+        background: rgba(10, 2, 5, 0.96);  
+        border-radius: 32px;  
+        z-index: 90;  
+        flex-direction: column;  
+        justify-content: center;  
+        align-items: center;  
+    }  
+    .success-checkmark {  
+        display: none;  
+        font-size: 65px;  
+        color: var(--neon-green);  
+        text-shadow: 0 0 20px rgba(0, 255, 163, 0.6);  
+        margin-bottom: 15px;  
+        animation: popupSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;  
+    }  
+    .done-text {  
+        display: none;  
+        font-family: 'Chakra Petch', sans-serif;  
+        font-size: 28px;  
+        font-weight: 800;  
+        color: #ffffff;  
+        letter-spacing: 2px;  
+    }  
+
+    /* ⚙️ SETTINGS PANEL VIEW */  
+    .settings-panel-view {  
+        display: none;  
+        position: absolute;  
+        top: 0; left: 0; width: 100%; height: 100%;  
+        background: #0f0508;  
+        border-radius: 32px;  
+        z-index: 95;  
+        padding: 25px 20px;  
+        overflow-y: auto;  
+        text-align: left;  
+    }  
+    .settings-header {  
+        display: flex;  
+        align-items: center;  
+        justify-content: space-between;  
+        margin-bottom: 20px;  
+        border-bottom: 1px solid rgba(255,255,255,0.08);  
+        padding-bottom: 12px;  
+    }  
+    .settings-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 800; color: var(--neon-gold); }  
+    
+    /* 👤 PROFILE PHOTO UPLOADER */  
+    .profile-avatar-wrapper {  
+        display: flex;  
+        flex-direction: column;  
+        align-items: center;  
+        margin-bottom: 20px;  
+        background: rgba(255,255,255,0.02);  
+        padding: 15px;  
+        border-radius: 20px;  
+        border: 1px solid rgba(255,255,255,0.05);  
+    }  
+    .profile-pic-container {  
+        position: relative;  
+        width: 90px; height: 90px;  
+        border-radius: 50%;  
+        border: 3px solid var(--neon-cyan);  
+        overflow: hidden;  
+        background: #221218;  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        margin-bottom: 10px;  
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);  
+    }  
+    .profile-pic-container img { width: 100%; height: 100%; object-fit: cover; }  
+    .profile-pic-container i { font-size: 32px; color: rgba(255,255,255,0.3); }  
+    .upload-avatar-btn {  
+        background: var(--neon-cyan); color: #000; font-size: 11px; font-weight: 800; padding: 6px 14px; border-radius: 20px; cursor: pointer; text-transform: uppercase;  
+    }  
+
+    .category-section { margin-bottom: 18px; background: rgba(0,0,0,0.4); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.04); }  
+    .category-title { font-size: 12px; font-weight: 800; color: var(--neon-pink); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }  
+    .meta-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary); padding-bottom: 4px; border-bottom: 1px dashed rgba(255,255,255,0.05); }  
+    .meta-row span:last-child { color: #fff; font-weight: 700; text-align: right; }  
+
+    /* PIN DISPLAY LOCK */  
+    .pin-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,2,4,0.97); z-index:10000; flex-direction:column; justify-content:center; align-items:center; }  
+    .pin-title { font-size:18px; font-weight:800; color:var(--neon-gold); margin-bottom:20px; }  
+    .pin-display { font-size:32px; letter-spacing:10px; color:#fff; background:#000; padding:10px 30px; border-radius:12px; border:1px solid var(--neon-pink); margin-bottom:25px; min-width:160px; text-align:center; height:58px;}  
+    .pin-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; max-width:280px; }  
+    .pin-btn { width:65px; height:65px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; font-size:22px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }  
+    .pin-btn:hover { background:var(--neon-cyan); color:#000; }  
+
+    .input-panel { background: rgba(0, 0, 0, 0.5); border-radius: 20px; padding: 18px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px; text-align: left;}  
+    .odd-num-box { background: #0b0407; border: 2px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 8px 15px; width: 130px; font-family: 'Chakra Petch', sans-serif; font-size: 24px; font-weight: 700; color: var(--neon-gold); text-align: center; outline: none; }  
+    
+    .btn-wrapper { display: flex; gap: 10px; margin-bottom: 20px; }  
+    .btn-sec { background: rgba(255, 255, 255, 0.03); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.2); }  
+
+    .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }  
+    .sig-card { background: linear-gradient(135deg, rgba(30, 15, 22, 0.8) 0%, rgba(15, 5, 10, 0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 20px; padding: 18px 12px; text-align: center; border-left: 3px solid var(--neon-pink); opacity: 0; animation: cardEntrance 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }  
+    .card-id { font-size: 10px; color: var(--text-secondary); font-weight: 700; margin-bottom: 4px; }  
+    .card-time { font-family: 'Chakra Petch', sans-serif; font-size: 14px; font-weight: 700; color: var(--neon-cyan); background: rgba(0, 243, 255, 0.08); padding: 2px 8px; border-radius: 6px; display: inline-block; }  
+    .card-odd { font-family: 'Chakra Petch', sans-serif; font-size: 30px; font-weight: 700; color: var(--neon-green); margin: 2px 0; }  
+    .card-accuracy { font-size: 11px; color: var(--neon-gold); background: rgba(255, 215, 0, 0.08); padding: 3px 8px; border-radius: 30px; display: inline-block; margin-bottom: 12px; }  
+
+    .copy-btn { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }  
+    .copy-btn:hover { background: var(--neon-pink); }  
+    
+    .btn-copy-all { width: 100%; padding: 16px; background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #000; border: none; border-radius: 16px; font-size: 14px; font-weight: 800; text-transform: uppercase; display: none; justify-content: center; align-items: center; gap: 8px; margin-bottom: 25px; }  
+    .empty-view { grid-column: span 2; text-align: center; padding: 40px 10px; color: var(--text-secondary); font-size: 13px; border: 1px dashed rgba(255,255,255,0.06); border-radius: 20px; }  
+    
+    .footer-box { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 12px; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-top: 15px; }  
+    .footer-box span { color: var(--neon-gold); }  
+
+    /* TELEGRAM GROUP NOTICE STYLING */  
+    .tg-notice-wrapper {  
+        background: rgba(0, 136, 204, 0.05);  
+        border: 1px solid rgba(0, 136, 204, 0.2);  
+        border-radius: 18px;  
+        padding: 15px;  
+        margin: 15px 0;  
+        text-align: left;  
+    }  
+    .tg-notice-text {  
+        font-size: 12.5px;  
+        color: #e2e8f0;  
+        line-height: 1.6;  
+        margin-bottom: 12px;  
+        font-weight: 600;  
+    }  
+    .tg-action-link {  
+        display: flex;  
+        align-items: center;  
+        justify-content: center;  
+        gap: 10px;  
+        width: 100%;  
+        padding: 12px;  
+        background: linear-gradient(135deg, #0088cc 0%, #006699 100%);  
+        color: #ffffff;  
+        font-size: 13px;  
+        font-weight: 800;  
+        text-transform: uppercase;  
+        text-decoration: none;  
+        border-radius: 12px;  
+        box-shadow: 0 4px 12px rgba(0, 136, 204, 0.2);  
+        transition: all 0.3s;  
+    }  
+    .tg-action-link:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 136, 204, 0.4); }  
+</style>  
+</head>  
+<body>  
+
+<div id="splash-screen">  
+    <div class="loader-logo">PRAKASH ACADEMY</div>  
+    <div class="loader-sub">Casino AI Signals Engine</div>  
+    <div class="loader-bar"><div class="loader-progress"></div></div>  
+</div>  
+
+<div class="pin-modal" id="pinScreen">  
+    <div class="pin-title" id="pinPromptText">ENTER APP LOCK PIN</div>  
+    <div class="pin-display" id="pinDots"></div>  
+    <div class="pin-grid">  
+        <button class="pin-btn" onclick="pressPin('1')">1</button>  
+        <button class="pin-btn" onclick="pressPin('2')">2</button>  
+        <button class="pin-btn" onclick="pressPin('3')">3</button>  
+        <button class="pin-btn" onclick="pressPin('4')">4</button>  
+        <button class="pin-btn" onclick="pressPin('5')">5</button>  
+        <button class="pin-btn" onclick="pressPin('6')">6</button>  
+        <button class="pin-btn" onclick="pressPin('7')">7</button>  
+        <button class="pin-btn" onclick="pressPin('8')">8</button>  
+        <button class="pin-btn" onclick="pressPin('9')">9</button>  
+        <button class="pin-btn" style="background:rgba(255,0,85,0.2);" onclick="clearPin()">C</button>  
+        <button class="pin-btn" onclick="pressPin('0')">0</button>  
+        <button class="pin-btn" style="background:rgba(0,255,163,0.2);" onclick="submitPin()"><i class="fa-solid fa-check"></i></button>  
+    </div>  
+</div>  
+
+<div class="settings-panel-view" id="settingsContainer">  
+    <div class="settings-header">  
+        <div class="settings-title"><i class="fa-solid fa-sliders"></i> App Settings</div>  
+        <button class="top-btn" onclick="toggleSettingsView(false)"><i class="fa-solid fa-xmark"></i></button>  
+    </div>  
+    
+    <div class="profile-avatar-wrapper">  
+        <div class="profile-pic-container" id="avatarBox">  
+            <i class="fa-solid fa-user"></i>  
+        </div>  
+        <label class="upload-avatar-btn" for="avatarUploaderInput">Upload Photo</label>  
+        <input type="file" id="avatarUploaderInput" accept="image/*" style="display:none;" onchange="handleProfilePhoto(this)">  
+    </div>  
+
+    <div class="category-section">  
+        <div class="category-title"><i class="fa-solid fa-id-card"></i> Personal Profile Status</div>  
+        <div class="meta-row"><span>Status:</span><span id="profStatus" style="color:var(--neon-green);">Unverified</span></div>  
+        <div class="meta-row"><span>Game Play ID:</span><span id="profID">None</span></div>  
+        <div class="meta-row"><span>Betting Game Site:</span><span id="profSite">None</span></div>  
+        <div class="meta-row"><span>Selected Package:</span><span id="profPkg">None</span></div>  
+    </div>  
+
+    <div class="category-section">  
+        <div class="category-title"><i class="fa-solid fa-user-gear"></i> Your Personal Details Form</div>  
+        
+        <span class="panel-lbl">Full Name</span>  
+        <input type="text" id="formFullName" class="form-field-input" placeholder="Enter full name">  
+
+        <span class="panel-lbl">Age</span>  
+        <input type="number" id="formAge" class="form-field-input" placeholder="Enter age">  
+
+        <span class="panel-lbl">Nickname</span>  
+        <input type="text" id="formNickname" class="form-field-input" placeholder="Enter nickname">  
+
+        <span class="panel-lbl">Identity Number (NIC)</span>  
+        <input type="text" id="formIdentity" class="form-field-input" placeholder="ID or Passport Number">  
+
+        <button class="action-btn btn-prime" style="padding:12px; font-size:13px;" onclick="savePersonalDetailsForm()">  
+            <i class="fa-solid fa-floppy-disk"></i> Save Profile Account  
+        </button>  
+    </div>  
+
+    <div class="category-section">  
+        <div class="category-title"><i class="fa-solid fa-key"></i> Security PIN Configuration</div>  
+        <button class="action-btn" style="padding:10px; font-size:12px; background:rgba(0,243,255,0.1); color:var(--neon-cyan); border:1px solid var(--neon-cyan);" onclick="triggerCreatePinMode()">  
+            Create / Reset Lock PIN  
+        </button>  
+    </div>  
+</div>  
+
+
+<div class="app-container" id="activationApp">  
+    <div class="verify-loading-screen" id="verifyEngineOverlay">  
+        <i class="fa-solid fa-circle-notch fa-spin" id="vSpinner" style="font-size: 50px; color: var(--neon-cyan);"></i>  
+        <div class="success-checkmark" id="vCheck"><i class="fa-solid fa-circle-check"></i></div>  
+        <div class="done-text" id="vDone">DONE</div>  
+    </div>  
+
+    <div class="top-bar">  
+        <div class="user-welcome-badge id-display-name-tag" style="color:var(--neon-pink);">Unverified User<br><span style="font-size:9px;">(Please verify personal info)</span></div>  
+        <div class="brand-title">PRAKASH</div>  
+        <button class="top-btn" onclick="toggleSettingsView(true)"><i class="fa-solid fa-gear"></i></button>  
+    </div>  
+    <div class="brand-tag">🎰 CASINO INTEGRATION SYSTEM 🎰</div>  
+
+    <div class="alert-popup" id="unverifiedAlertCard" style="display: none;">  
+        <div class="alert-title"><i class="fa-solid fa-triangle-exclamation"></i> Verification Failed</div>  
+        <div class="alert-desc">  
+            මෙම ප්ලේයර් ID එක ඇඩ්මින් විසින් වෙරිෆයි නොකරන ලද ID එකකි. කරුණාකර ඇඩ්මින් විසින් මෙලෙස වෙරිෆයි කරගෙන අදාළ පැකේජස් මගින් ලබා ගන්න.  
+        </div>  
+    </div>  
+
+    <div class="setup-panel" id="requestFormSection">  
+        <span class="panel-lbl"><i class="fa-solid fa-fingerprint"></i> Enter Game Player ID</span>  
+        <input type="text" id="playerGameId" class="id-input-box" placeholder="e.g. 87654321" autocomplete="off">  
+          
+        <span class="panel-lbl"><i class="fa-solid fa-gamepad"></i> Select Your Betting Site</span>  
+        <select id="bettingSite" class="select-input-box">  
+            <option value="" disabled selected>-- Choose Platform --</option>  
+            <option value="1xBet">1xBet</option>  
+            <option value="DB Bet">DB Bet</option>  
+            <option value="888">888</option>  
+            <option value="MelBet">MelBet</option>  
+            <option value="PartiPulas">PartiPulas</option>  
+            <option value="Win Win">Win Win</option>  
+            <option value="Wow Bet">Wow Bet</option>  
+            <option value="Mega Pari">Mega Pari</option>  
+            <option value="LineBet">LineBet</option>  
+        </select>  
+
+        <span class="panel-lbl"><i class="fa-solid fa-box-open"></i> Choose Preferred AI Package</span>  
+        <select id="academyPkgDropdown" class="select-input-box">  
+            <option value="Weekly Package" selected>Weekly Package</option>  
+            <option value="Monthly Package">Monthly Package</option>  
+            <option value="Lifetime Package">Lifetime Package</option>  
+            <option value="Deposit Offer Package (Rs.5000+)">Deposit Offer Package (Rs. 5000+)</option>  
+        </select>  
+          
+        <div style="margin-top: 5px;">  
+            <button class="action-btn btn-prime" id="requestBtn" onclick="processVerifyEngine()">  
+                <i class="fa-solid fa-shield-check"></i> Submit Verify  
+            </button>  
+        </div>  
+    </div>  
+
+    <button class="action-btn btn-logout" onclick="logoutSystem()"><i class="fa-solid fa-right-from-bracket"></i> Clear Form</button>  
+
+    <div class="tg-notice-wrapper">  
+        <div class="tg-notice-text">  
+            ⚠️ අලුත් ප්ලේ ID වෙරිෆිකේෂන් කරගැනීමට සහ අලුත් අප්ඩේට්ස් ලබා ගැනීමට දැන්ම පහත චැනල් එකට සම්බන්ධ වී එහි ඇති කන්ටැක්ට් ඩීටේල්ස් වලින් ඇඩ්මින් සම්බන්ධ කරගන්න.  
+        </div>  
+        <a href="https://t.me/Aviator_Signel_Prakash_Academy" target="_blank" class="tg-action-link">  
+            <i class="fa-brands fa-telegram" style="font-size:18px;"></i> Connect Telegram Channel  
+        </a>  
+    </div>  
+
+    <div class="footer-box">Powered by <span>Prakash Academy</span></div>  
+</div>  
+
+
+<div class="app-container" id="mainApp">  
+    <div class="top-bar">  
+        <div class="user-welcome-badge id-display-name-tag" style="color:var(--neon-green);">Verified Account</div>  
+        <div class="brand-title">PRAKASH</div>  
+        <button class="top-btn" onclick="toggleSettingsView(true)"><i class="fa-solid fa-gear"></i></button>  
+    </div>  
+    <div class="brand-tag">🎰 CASINO AVIATOR PRO 🎰</div>  
+
+    <div class="input-panel">  
+        <span class="panel-lbl">Last Peak Odd Box</span>  
+        <div>  
+            <input type="number" id="peakOddVal" class="odd-num-box" value="23.00" step="0.01">  
+            <span style="font-size:20px; color:var(--neon-gold); font-weight:bold; margin-left:5px;">X</span>  
+        </div>  
+    </div>  
+
+    <div class="btn-wrapper">  
+        <button class="action-btn btn-prime" onclick="generatePremiumGrid()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Signals</button>  
+        <button class="action-btn btn-sec" onclick="clearPremiumGrid()"><i class="fa-solid fa-trash-can"></i> Clear All</button>  
+    </div>  
+
+    <div class="cards-grid" id="gridDisplay">  
+        <div class="empty-view">Set Peak Odd & Click Generate to deploy.</div>  
+    </div>  
+
+    <button class="btn-copy-all" id="copyAllBtn" onclick="copyAllSignalsTogether()">  
+        <i class="fa-solid fa-copy"></i> ... COPY ALL 4 SIGNALS TOGETHER ...  
+    </button>  
+
+    <button class="action-btn btn-logout" onclick="logoutSystem()" style="margin-bottom: 20px;">  
+        <i class="fa-solid fa-right-from-bracket"></i> Logout Session  
+    </button>  
+
+    <div class="footer-box">Powered by <span>Prakash Academy</span></div>  
+</div>  
+
+<script>  
+    let generatedSignalsList = [];  
+    let pinBuffer = "";  
+    let currentPinMode = "unlock";  
+
+    window.addEventListener('DOMContentLoaded', () => {  
+        // Reload base64 image avatar data  
+        const cachedPhoto = localStorage.getItem('profile_avatar_base64');  
+        if (cachedPhoto) {  
+            document.getElementById('avatarBox').innerHTML = `<img src="${cachedPhoto}" alt="Avatar">`;  
+        }  
+        
+        // Reload saved form inputs  
+        if(localStorage.getItem('form_fullname')) document.getElementById('formFullName').value = localStorage.getItem('form_fullname');  
+        if(localStorage.getItem('form_age')) document.getElementById('formAge').value = localStorage.getItem('form_age');  
+        if(localStorage.getItem('form_nickname')) document.getElementById('formNickname').value = localStorage.getItem('form_nickname');  
+        if(localStorage.getItem('form_identity')) document.getElementById('formIdentity').value = localStorage.getItem('form_identity');  
+
+        setTimeout(() => {  
+            document.getElementById('splash-screen').style.opacity = '0';  
+            setTimeout(() => {  
+                document.getElementById('splash-screen').style.display = 'none';  
+                checkPinLockRequirement();  
+            }, 600);  
+        }, 2500);  
+    });  
+
+    // --- LOCK SECURITY PIN SYSTEM CONFIG ---  
+    function checkPinLockRequirement() {  
+        const savedPin = localStorage.getItem('app_pin_lock');  
+        if (savedPin) {  
+            currentPinMode = "unlock";  
+            document.getElementById('pinPromptText').innerText = "ENTER APP LOCK PIN";  
+            document.getElementById('pinScreen').style.display = 'flex';  
+            clearPin();  
+        } else {  
+            checkRealtimeStatus();  
+        }  
+    }  
+
+    function pressPin(num) {  
+        if (pinBuffer.length < 4) {  
+            pinBuffer += num;  
+            updatePinDisplay();  
+        }  
+    }  
+    function clearPin() {  
+        pinBuffer = "";  
+        updatePinDisplay();  
+    }  
+    function updatePinDisplay() {  
+        let dots = "";  
+        for(let i=0; i<pinBuffer.length; i++) dots += "●";  
+        document.getElementById('pinDots').innerText = dots;  
+    }  
+
+    function submitPin() {  
+        if (pinBuffer.length !== 4) {  
+            alert("Please enter a 4-digit PIN!");  
+            return;  
+        }  
+        if (currentPinMode === "unlock") {  
+            if (pinBuffer === localStorage.getItem('app_pin_lock')) {  
+                document.getElementById('pinScreen').style.display = 'none';  
+                checkRealtimeStatus();  
+            } else {  
+                alert("Incorrect PIN Code! Access Denied.");  
+                clearPin();  
+            }  
+        } else if (currentPinMode === "setup") {  
+            localStorage.setItem('app_pin_lock', pinBuffer);  
+            alert("Security System PIN Locked Successfully!");  
+            document.getElementById('pinScreen').style.display = 'none';  
+        }  
+    }  
+
+    function triggerCreatePinMode() {  
+        currentPinMode = "setup";  
+        document.getElementById('pinPromptText').innerText = "CREATE 4-DIGIT PIN";  
+        document.getElementById('pinScreen').style.display = 'flex';  
+        clearPin();  
+    }  
+
+    // --- SAVE PERSONAL DETAILS FORM FIELD MACHINE ---  
+    function savePersonalDetailsForm() {  
+        const fName = document.getElementById('formFullName').value.trim();  
+        const fAge = document.getElementById('formAge').value.trim();  
+        const fNick = document.getElementById('formNickname').value.trim();  
+        const fId = document.getElementById('formIdentity').value.trim();  
+
+        if(!fName || !fAge || !fNick || !fId) {  
+            alert("Please fill all fields inside Personal Details Form!");  
+            return;  
+        }  
+
+        localStorage.setItem('form_fullname', fName);  
+        localStorage.setItem('form_age', fAge);  
+        localStorage.setItem('form_nickname', fNick);  
+        localStorage.setItem('form_identity', fId);  
+
+        alert("Profile Account created & saved successfully!");  
+        checkRealtimeStatus();  
+    }  
+
+    // --- ENGINE CONTROL REALTIME APP STATE VISIBILITY ---  
+    function checkRealtimeStatus() {  
+        let appState = localStorage.getItem('prakash_academy_session');  
+        let idVal = localStorage.getItem('prakash_player_id') || "None";  
+        let siteVal = localStorage.getItem('prakash_betting_site') || "None";  
+        let pkgVal = localStorage.getItem('prakash_pkg_plan') || "None";  
+        let savedName = localStorage.getItem('form_fullname');  
+
+        // Update settings metadata records view  
+        document.getElementById('profID').innerText = idVal;  
+        document.getElementById('profSite').innerText = siteVal;  
+        document.getElementById('profPkg').innerText = pkgVal;  
+
+        // Set Top Left Account Welcome Header Label Text Format  
+        let displayTitle = "";  
+        if (savedName) {  
+            displayTitle = `<i class="fa-solid fa-circle-user"></i> ${savedName}`;  
+        } else {  
+            displayTitle = `Unverified User<br><span style="font-size:9px; color:#ff3366;">(Please verify personal info)</span>`;  
+        }  
+
+        const nameBadges = document.querySelectorAll('.id-display-name-tag');  
+        nameBadges.forEach(badge => {  
+            badge.innerHTML = displayTitle;  
+            if(savedName) {  
+                badge.style.color = "var(--neon-green)";  
+            } else {  
+                badge.style.color = "var(--neon-pink)";  
+            }  
+        });  
+
+        if (appState === 'active') {  
+            document.getElementById('profStatus').innerText = "Verified (Active)";  
+            document.getElementById('profStatus').style.color = "var(--neon-green)";  
+            document.getElementById('activationApp').style.display = 'none';  
+            document.getElementById('mainApp').classList.add('app-visible');  
+        } else {  
+            document.getElementById('profStatus').innerText = "Unverified (Form View)";  
+            document.getElementById('profStatus').style.color = "var(--neon-pink)";  
+            document.getElementById('activationApp').classList.add('app-visible');  
+            document.getElementById('mainApp').style.display = 'none';  
+            document.getElementById('mainApp').classList.remove('app-visible');  
+        }  
+    }  
+
+    function toggleSettingsView(show) {  
+        document.getElementById('settingsContainer').style.display = show ? 'block' : 'none';  
+    }  
+
+    function handleProfilePhoto(uploader) {  
+        if (uploader.files && uploader.files[0]) {  
+            const reader = new FileReader();  
+            reader.onload = function (e) {  
+                localStorage.setItem('profile_avatar_base64', e.target.result);  
+                document.getElementById('avatarBox').innerHTML = `<img src="${e.target.result}" alt="Avatar">`;  
+            }  
+            reader.readAsDataURL(uploader.files[0]);  
+        }  
+    }  
+
+    // --- FORM SUBMIT ENGINE VERIFICATION PROCESS ---  
+    function processVerifyEngine() {  
+        const idInput = document.getElementById('playerGameId').value.trim();  
+        const siteInput = document.getElementById('bettingSite').value;  
+        const pkgValue = document.getElementById('academyPkgDropdown').value;  
+
+        if(idInput === "") { alert("Please enter a valid Player ID!"); return; }  
+        if(!siteInput) { alert("Please select your Betting Site!"); return; }  
+
+        document.getElementById('unverifiedAlertCard').style.display = 'none';  
+
+        const overlay = document.getElementById('verifyEngineOverlay');  
+        const spinner = document.getElementById('vSpinner');  
+        const checkmark = document.getElementById('vCheck');  
+        const doneText = document.getElementById('vDone');  
+
+        overlay.style.display = 'flex';  
+        spinner.style.display = 'block';  
+        checkmark.style.display = 'none';  
+        doneText.style.display = 'none';  
+
+        setTimeout(() => {  
+            // BYPASS RULES AUTHENTICATED KEY VALUE (123456)  
+            if (idInput === "123456" && siteInput === "1xBet" && pkgValue === "Weekly Package") {  
+                spinner.style.display = 'none';  
+                checkmark.style.display = 'block';  
+                doneText.style.display = 'block';  
+
+                setTimeout(() => {  
+                    localStorage.setItem('prakash_player_id', idInput);  
+                    localStorage.setItem('prakash_betting_site', siteInput);  
+                    localStorage.setItem('prakash_pkg_plan', pkgValue);  
+                    localStorage.setItem('prakash_academy_session', 'active');  
+                    overlay.style.display = 'none';  
+                    
+                    document.getElementById('activationApp').classList.remove('app-visible');  
+                    document.getElementById('activationApp').style.display = 'none';  
+                    document.getElementById('mainApp').classList.add('app-visible');  
+                    checkRealtimeStatus();  
+                }, 1500);  
+
+            } else {  
+                overlay.style.display = 'none';  
+                document.getElementById('unverifiedAlertCard').style.display = 'block';  
+            }  
+        }, 3000);  
+    }  
+
+    function logoutSystem() {  
+        if(confirm("Are you sure you want to log out / reset state?")) {  
+            localStorage.removeItem('prakash_academy_session');  
+            localStorage.removeItem('prakash_player_id');  
+            localStorage.removeItem('prakash_betting_site');  
+            localStorage.removeItem('prakash_pkg_plan');  
+            
+            document.getElementById('mainApp').classList.remove('app-visible');  
+            document.getElementById('mainApp').style.display = 'none';  
+            document.getElementById('unverifiedAlertCard').style.display = 'none';  
+            
+            document.getElementById('playerGameId').value = "";  
+            document.getElementById('bettingSite').selectedIndex = 0;  
+            document.getElementById('academyPkgDropdown').selectedIndex = 0;  
+            
+            document.getElementById('activationApp').style.display = 'block';  
+            document.getElementById('activationApp').classList.add('app-visible');  
+            checkRealtimeStatus();  
+        }  
+    }  
+
+    // --- AI GENERATION SYSTEMS GRID TRANSMITTER ---  
+    function generatePremiumGrid() {  
+        const display = document.getElementById('gridDisplay');  
+        const inputOdd = parseFloat(document.getElementById('peakOddVal').value) || 23.00;  
+          
+        display.innerHTML = "";   
+        generatedSignalsList = [];   
+        let baseTime = new Date();  
+
+        for (let i = 1; i <= 4; i++) {  
+            let variance = 0.35 + (Math.random() * 0.75);  
+            let finalTargetOdd = (3.25 + (inputOdd * variance * 0.19)).toFixed(2);  
+            let matchPercentage = Math.floor(90 + Math.random() * 10);  
+            let delayTime = (i * 0.12) + 's';   
+
+            baseTime.setMinutes(baseTime.getMinutes() + Math.floor(2 + Math.random() * 3));  
+            let hours = String(baseTime.getHours()).padStart(2, '0');  
+            let minutes = String(baseTime.getMinutes()).padStart(2, '0');  
+            let formattedTime = `${hours}:${minutes}`;  
+
+            generatedSignalsList.push({ id: i, time: formattedTime, odd: finalTargetOdd, accuracy: matchPercentage });  
+
+            display.innerHTML += `  
+                <div class="sig-card" style="animation-delay: ${delayTime}">  
+                    <div class="card-id">⚡ SIGNAL 0${i}</div>  
+                    <div class="card-time"><i class="fa-solid fa-clock"></i> ${formattedTime}</div>  
+                    <div class="card-odd">${finalTargetOdd}x</div>  
+                    <div class="card-accuracy">🔥 ${matchPercentage}% Sure</div>  
+                    <button class="copy-btn" onclick="copyIndividualSignal(${i}, '${formattedTime}', '${finalTargetOdd}', ${matchPercentage})">  
+                        Copy Box 0${i}  
+                    </button>  
+                </div>  
+            `;  
+        }  
+        document.getElementById('copyAllBtn').style.display = 'flex';  
+    }  
+
+    function smartClipboardCopy(text, successCallback) {  
+        const textArea = document.createElement("textarea");  
+        textArea.value = text;  
+        textArea.style.position = "fixed"; textArea.style.opacity = "0";  
+        document.body.appendChild(textArea);  
+        textArea.focus(); textArea.select();  
+        try { if(document.execCommand('copy')) successCallback(); } catch (err) {}  
+        document.body.removeChild(textArea);  
+    }  
+
+    function copyIndividualSignal(id, time, odd, confidence) {  
+        const text = `🚨 *PRAKASH ACADEMY* 🚨\n🎯 Box: 0${id}\n⏰ Time: ${time}\n📈 Odd: ${odd}x\n🔮 AI: ${confidence}% Sure`;  
+        smartClipboardCopy(text, function() { alert(`Signal 0${id} Box Copied!`); });  
+    }  
+
+    function copyAllSignalsTogether() {  
+        if(generatedSignalsList.length === 0) return;  
+        let bulkText = `👑 *PRAKASH ACADEMY PREMIUM SIGNALS* 👑\n\n`;  
+        generatedSignalsList.forEach(sig => {  
+            bulkText += `🚀 SIGNAL 0${sig.id} -> Time: ${sig.time} | Odd: ${sig.odd}x | Confidence: ${sig.accuracy}%\n`;  
+        });  
+        smartClipboardCopy(bulkText, function() { alert("All signals copied together!"); });  
+    }  
+
+    function clearPremiumGrid() {  
+        document.getElementById('gridDisplay').innerHTML = `<div class="empty-view">Set Peak Odd & Click Generate to deploy.</div>`;  
+        document.getElementById('copyAllBtn').style.display = 'none';  
+        generatedSignalsList = [];  
+    }  
+</script>  
+</body>  
+</html>
