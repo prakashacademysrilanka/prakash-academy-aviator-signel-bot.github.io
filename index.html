@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lakshan Service - Elite Login</title>
+    <title>Lakshan Service - Elite Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -29,7 +29,7 @@
             overflow-x: hidden;
         }
 
-        /* --- ROYAL LOADER SCREEN --- */
+        /* --- ROYAL LOADER SCREEN WITH LOGO ANIMATION --- */
         #loaderScreen {
             position: fixed;
             top: 0;
@@ -42,35 +42,51 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .loader-logo-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2px solid rgba(191, 149, 63, 0.4);
+            box-shadow: 0 0 25px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(220, 20, 60, 0.2);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: pulseGlow 1.5s ease-in-out infinite alternate;
+            background: #121216;
+        }
+
+        .loader-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: rotateLogo 8s linear infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); box-shadow: 0 0 15px rgba(191, 149, 63, 0.2); }
+            100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(191, 149, 63, 0.6); }
+        }
+
+        @keyframes rotateLogo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .loader-brand {
             font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 900;
             background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             letter-spacing: 2px;
             text-align: center;
-        }
-
-        .royal-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.05);
-            border-top: 3px solid #bf953f;
-            border-right: 3px solid #dc143c;
-            border-radius: 50%;
-            animation: spinRing 0.8s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .loader-text {
@@ -81,7 +97,7 @@
             font-family: 'Rajdhani', sans-serif;
         }
 
-        /* --- MAIN APP & LOGIN WRAPPER --- */
+        /* --- MAIN APP WRAPPER --- */
         .app-wrapper {
             width: 100%;
             max-width: 440px;
@@ -102,15 +118,10 @@
             transform: translateY(0);
         }
 
-        /* Views Control */
-        .view-section {
-            display: none;
-        }
-        .view-section.active-view {
-            display: block;
-        }
+        .view-section { display: none; }
+        .view-section.active-view { display: block; }
 
-        /* --- LOGIN SCREEN STYLES --- */
+        /* --- LOGIN SCREEN --- */
         .login-header {
             text-align: center;
             margin-bottom: 20px;
@@ -183,7 +194,7 @@
             font-weight: 700;
         }
 
-        /* --- DASHBOARD STYLES --- */
+        /* --- DASHBOARD HEADER WITH CIRCULAR LOGO --- */
         .header-box {
             display: flex;
             justify-content: space-between;
@@ -193,9 +204,31 @@
             padding-bottom: 12px;
         }
 
+        .brand-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #bf953f;
+            overflow: hidden;
+            background: #121216;
+            box-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
+        }
+
+        .header-logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .logo-area h1 {
             font-family: 'Cinzel', serif;
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 900;
             background: linear-gradient(135deg, #bf953f, #fbf5b7);
             -webkit-background-clip: text;
@@ -204,9 +237,9 @@
         }
 
         .logo-area span {
-            font-size: 0.62rem;
+            font-size: 0.58rem;
             color: #dc143c;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
             font-weight: 700;
             display: block;
         }
@@ -232,6 +265,7 @@
             box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
         }
 
+        /* Control Panel */
         .control-panel {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -244,9 +278,7 @@
             margin-bottom: 10px;
         }
 
-        .input-group:last-child {
-            margin-bottom: 0;
-        }
+        .input-group:last-child { margin-bottom: 0; }
 
         .input-group label {
             font-size: 0.68rem;
@@ -271,11 +303,7 @@
             transition: 0.3s;
         }
 
-        select option {
-            background: #121216;
-            color: #fff;
-        }
-
+        select option { background: #121216; color: #fff; }
         select:focus, input:focus {
             border-color: #bf953f;
             box-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
@@ -307,14 +335,10 @@
             box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5);
         }
 
-        .btn-generate i {
-            transition: transform 0.8s ease;
-        }
+        .btn-generate i { transition: transform 0.8s ease; }
+        .btn-generate.spinning i { transform: rotate(360deg); }
 
-        .btn-generate.spinning i {
-            transform: rotate(360deg);
-        }
-
+        /* Signals Grid */
         .signals-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -386,10 +410,7 @@
             font-size: 0.6rem;
         }
 
-        .accuracy {
-            color: #00ff88;
-            font-weight: 600;
-        }
+        .accuracy { color: #00ff88; font-weight: 600; }
 
         .badge {
             font-size: 0.55rem;
@@ -457,10 +478,12 @@
 </head>
 <body>
 
-    <!-- ROYAL LOADER -->
+    <!-- ROYAL LOADER WITH CLOUDINARY LOGO -->
     <div id="loaderScreen">
+        <div class="loader-logo-container">
+            <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786468519/file_00000000e9f0820b9005fecd0575db3c_ncbsvw.png" alt="Logo">
+        </div>
         <div class="loader-brand">LAKSHAN SERVICE</div>
-        <div class="royal-spinner"></div>
         <div class="loader-text">Loading Official System...</div>
     </div>
 
@@ -497,9 +520,14 @@
         <!-- VIEW 2: DASHBOARD SCREEN -->
         <div id="dashboardView" class="view-section">
             <div class="header-box">
-                <div class="logo-area">
-                    <h1>LAKSHAN SERVICE</h1>
-                    <span>SRI LANKA ELITE</span>
+                <div class="brand-flex">
+                    <div class="header-logo-circle">
+                        <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786468519/file_00000000e9f0820b9005fecd0575db3c_ncbsvw.png" alt="Logo">
+                    </div>
+                    <div class="logo-area">
+                        <h1>LAKSHAN SERVICE</h1>
+                        <span>SRI LANKA ELITE</span>
+                    </div>
                 </div>
                 <button class="logout-btn" onclick="handleLogout()">
                     <i class="fa-solid fa-power-off"></i> Logout
@@ -607,7 +635,7 @@
             }, 1800);
         });
 
-        // Login Logic with Active Credentials (123456789 & 123)
+        // Login Logic
         function handleLogin() {
             let enteredId = document.getElementById('playerIdInput').value.trim();
             let enteredPass = document.getElementById('passwordInput').value.trim();
@@ -616,7 +644,6 @@
             if (enteredId === "123456789" && enteredPass === "123") {
                 errorBox.style.display = 'none';
                 
-                // Switch to dashboard smoothly
                 document.getElementById('loginView').classList.remove('active-view');
                 document.getElementById('dashboardView').classList.add('active-view');
             } else {
