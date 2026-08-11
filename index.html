@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prakash Academy Aviator Signel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Lakshan Service - Elite Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -16,528 +16,691 @@
         }
 
         body {
-            background-color: #060913;
-            color: #ffffff;
+            background: #08080a;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
+            color: #fff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            padding: 15px;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 10%, #1a103c 0%, #060913 70%);
         }
 
-        .container {
+        /* --- ROYAL LOADER SCREEN --- */
+        #loaderScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 480px;
-            background: linear-gradient(145deg, #101626, #090e1a);
-            border-radius: 28px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 111, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Login Screen */
-        .login-screen {
-            padding: 35px 25px;
-            text-align: center;
+            height: 100%;
+            background: #08080a;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 580px;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        .brand-logo-area {
-            margin-bottom: 25px;
+        .loader-brand {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-align: center;
         }
 
-        .brand-logo-area i {
-            font-size: 45px;
-            color: #ff6f00;
-            filter: drop-shadow(0 0 15px rgba(255, 111, 0, 0.6));
-            margin-bottom: 12px;
+        .royal-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.05);
+            border-top: 3px solid #bf953f;
+            border-right: 3px solid #dc143c;
+            border-radius: 50%;
+            animation: spinRing 0.8s linear infinite;
+            margin-bottom: 15px;
         }
 
-        .login-screen h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 1px;
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-size: 0.7rem;
+            color: #aaa;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
         }
 
-        .login-screen p {
-            font-size: 13px;
-            color: #8b9bb4;
-            margin-top: 5px;
+        /* --- MAIN APP & LOGIN WRAPPER --- */
+        .app-wrapper {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(15, 15, 20, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            border-radius: 26px;
+            padding: 22px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(220, 20, 60, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.7s ease;
         }
 
-        .input-group {
-            position: relative;
-            margin-top: 25px;
-            text-align: left;
+        .app-wrapper.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .input-group label {
+        /* Views Control */
+        .view-section {
+            display: none;
+        }
+        .view-section.active-view {
             display: block;
-            font-size: 12px;
-            color: #8b9bb4;
-            margin-bottom: 8px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .input-wrapper {
-            position: relative;
+        /* --- LOGIN SCREEN STYLES --- */
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ff6f00;
-            font-size: 16px;
+        .login-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #bf953f, #fbf5b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
+        .login-header p {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .login-box {
             background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            color: #ffffff;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
         }
 
-        .input-group input:focus {
-            border-color: #ff6f00;
-            box-shadow: 0 0 12px rgba(255, 111, 0, 0.3);
-        }
-
-        .login-btn {
+        .btn-login {
             width: 100%;
-            margin-top: 30px;
-            padding: 15px;
-            background: linear-gradient(135deg, #ff6f00, #ff3d00);
+            padding: 13px;
+            background: linear-gradient(135deg, #bf953f, #aa7c11, #d4af37);
             border: none;
-            border-radius: 14px;
-            color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 15px;
+            border-radius: 12px;
+            color: #08080a;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
             font-weight: 700;
-            text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 111, 0, 0.4);
             transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
-        .login-btn:hover {
+        .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 111, 0, 0.6);
+            box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5);
         }
 
         .error-msg {
-            color: #ff3333;
-            font-size: 12px;
+            color: #ff4d4d;
+            font-size: 0.72rem;
+            text-align: center;
             margin-top: 10px;
+            font-weight: 500;
             display: none;
+            line-height: 1.4;
         }
 
-        /* App Dashboard Screen */
-        .app-screen {
-            display: none;
-            padding: 20px;
+        .error-msg a {
+            color: #25d366;
+            text-decoration: underline;
+            font-weight: 700;
         }
 
-        .header {
+        /* --- DASHBOARD STYLES --- */
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 15px;
+            margin-bottom: 18px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            margin-bottom: 20px;
+            padding-bottom: 12px;
         }
 
-        .header-title h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            color: #ff6f00;
-            text-transform: uppercase;
+        .logo-area h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #bf953f, #fbf5b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
         }
 
-        .header-title span {
-            font-size: 10px;
-            color: #00ff88;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 2px;
+        .logo-area span {
+            font-size: 0.62rem;
+            color: #dc143c;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            display: block;
         }
 
         .logout-btn {
-            background: rgba(255, 51, 51, 0.1);
-            border: 1px solid rgba(255, 51, 51, 0.3);
-            color: #ff3333;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
+            background: rgba(220, 20, 60, 0.12);
+            color: #ff4d4d;
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .logout-btn:hover {
-            background: rgba(255, 51, 51, 0.2);
+            background: #dc143c;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
         }
 
-        /* Input High Odd Section */
-        .odd-input-card {
+        .control-panel {
             background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            padding: 16px;
-            border: 1px solid rgba(255, 111, 0, 0.3);
-            margin-bottom: 20px;
+            padding: 14px;
+            margin-bottom: 15px;
         }
 
-        .odd-input-card label {
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-group label {
+            font-size: 0.68rem;
+            color: #bf953f;
+            margin-bottom: 4px;
             display: block;
-            font-size: 11px;
-            color: #8b9bb4;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
             font-weight: 600;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 0.5px;
         }
 
-        .odd-input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-
-        .odd-input-wrapper input {
-            flex: 1;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #00ff88;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(20, 20, 25, 0.9);
+            border: 1px solid rgba(191, 149, 63, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
             outline: none;
+            transition: 0.3s;
         }
 
-        .odd-input-wrapper input:focus {
-            border-color: #00ff88;
+        select option {
+            background: #121216;
+            color: #fff;
+        }
+
+        select:focus, input:focus {
+            border-color: #bf953f;
+            box-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
         }
 
         .btn-generate {
-            padding: 0 18px;
-            background: linear-gradient(135deg, #00ff88, #00b359);
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #bf953f, #aa7c11, #d4af37);
             border: none;
             border-radius: 12px;
-            color: #060913;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
-            font-weight: 800;
+            color: #08080a;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
             transition: all 0.3s ease;
-            text-transform: uppercase;
+            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
         }
 
         .btn-generate:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5);
         }
 
-        /* Signals Title Bar */
-        .signals-header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .btn-generate i {
+            transition: transform 0.8s ease;
+        }
+
+        .btn-generate.spinning i {
+            transform: rotate(360deg);
+        }
+
+        .signals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-bottom: 12px;
         }
 
-        .signals-header-bar span {
-            font-size: 12px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .accuracy-pill {
-            font-size: 10px;
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            padding: 3px 8px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            font-weight: 600;
-        }
-
-        /* 4 Signals Side-by-Side (2x2 Grid) */
-        .signals-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
         .signal-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 11px;
             position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .signal-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 3px;
-            background: #ff6f00;
+        .signal-card.active {
+            opacity: 1;
+            transform: scale(1);
         }
 
-        .signal-card.active::before {
-            background: #00ff88;
-            box-shadow: 0 0 10px #00ff88;
+        .signal-card.vip-target {
+            background: linear-gradient(135deg, rgba(191, 149, 63, 0.08), rgba(220, 20, 60, 0.05));
+            border-color: rgba(191, 149, 63, 0.4);
+            box-shadow: inset 0 0 10px rgba(191, 149, 63, 0.1);
         }
 
-        .signal-top-row {
+        .card-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
-        .signal-step {
-            font-size: 10px;
-            color: #8b9bb4;
-            text-transform: uppercase;
+        .slot-tag {
+            font-size: 0.6rem;
+            color: #888;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .time-tag {
+            font-size: 0.65rem;
+            color: #bf953f;
+            background: rgba(191, 149, 63, 0.1);
+            padding: 2px 5px;
+            border-radius: 4px;
             font-weight: 600;
         }
 
-        .signal-time {
-            font-size: 11px;
-            color: #ff6f00;
+        .odds-value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 3px 0;
+        }
+
+        .signal-card.vip-target .odds-value {
+            color: #fbf5b7;
+            text-shadow: 0 0 10px rgba(191, 149, 63, 0.5);
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.6rem;
+        }
+
+        .accuracy {
+            color: #00ff88;
             font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.55rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
+
+        .badge-safe { background: rgba(0, 255, 136, 0.12); color: #00ff88; }
+        .badge-vip { background: rgba(220, 20, 60, 0.2); color: #ff4d4d; border: 1px solid rgba(220, 20, 60, 0.3); }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 3px;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            letter-spacing: 0.5px;
         }
 
-        .signal-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-            margin-top: 4px;
+        .btn-copy {
+            background: linear-gradient(135deg, #333, #1a1a20);
+            border: 1px solid rgba(191, 149, 63, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .footer-note {
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #444, #222);
+            border-color: #bf953f;
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(37, 211, 102, 0.5);
+        }
+
+        .footer-credit {
             text-align: center;
-            font-size: 11px;
-            color: #6c7a92;
-            margin-top: 10px;
-        }
-
-        /* Loader inside button */
-        .loader {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(6, 9, 19, 0.3);
-            border-radius: 50%;
-            border-top-color: #060913;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            font-size: 0.62rem;
+            color: #666;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- LOGIN SCREEN -->
-        <div class="login-screen" id="loginScreen">
-            <div class="brand-logo-area">
-                <i class="fa-solid fa-jet-fighter-up"></i>
-                <h2>Prakash Academy</h2>
-                <p>Aviator Signals VIP Portal</p>
-            </div>
+    <!-- ROYAL LOADER -->
+    <div id="loaderScreen">
+        <div class="loader-brand">LAKSHAN SERVICE</div>
+        <div class="royal-spinner"></div>
+        <div class="loader-text">Loading Official System...</div>
+    </div>
 
-            <div class="input-group">
-                <label>Access Password</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="passwordInput" placeholder="Enter password...">
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-wrapper" id="mainApp">
+        
+        <!-- VIEW 1: LOGIN SCREEN -->
+        <div id="loginView" class="view-section active-view">
+            <div class="login-header">
+                <h2>MEMBER ACCESS</h2>
+                <p>LAKSHAN SERVICE ELITE PORTAL</p>
+            </div>
+            <div class="login-box">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-id-badge"></i> Player ID</label>
+                    <input type="text" id="playerIdInput" placeholder="Enter Player ID">
                 </div>
-                <div class="error-msg" id="errorMsg">Incorrect Password! Try again.</div>
+                <div class="input-group" style="margin-top: 12px;">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="passwordInput" placeholder="Enter Password">
+                </div>
+                <div class="error-msg" id="errorMsg">
+                    ❌ වැරදි විස්තරයකි! කරුණාකර <a href="https://whatsapp.com" target="_blank">Admin සම්බන්ධ කරගෙන</a> ගිනුම සක්‍රිය කරගන්න.
+                </div>
             </div>
-
-            <button class="login-btn" onclick="handleLogin()">Login to App</button>
+            <button class="btn-login" onclick="handleLogin()">
+                <i class="fa-solid fa-right-to-bracket"></i> LOGIN SYSTEM
+            </button>
+            <a href="https://whatsapp.com" target="_blank" class="btn-action btn-whatsapp" style="width:100%;">
+                <i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel
+            </a>
         </div>
 
-        <!-- APP DASHBOARD SCREEN -->
-        <div class="app-screen" id="appScreen">
-            <div class="header">
-                <div class="header-title">
-                    <h1>Prakash Academy</h1>
-                    <span><i class="fa-solid fa-circle-dot"></i> VIP System Active</span>
+        <!-- VIEW 2: DASHBOARD SCREEN -->
+        <div id="dashboardView" class="view-section">
+            <div class="header-box">
+                <div class="logo-area">
+                    <h1>LAKSHAN SERVICE</h1>
+                    <span>SRI LANKA ELITE</span>
                 </div>
-                <button class="logout-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </button>
             </div>
 
-            <!-- Big Odd Input Section -->
-            <div class="odd-input-card">
-                <label><i class="fa-solid fa-bolt" style="color: #ff6f00;"></i> Enter Chart Big Odd</label>
-                <div class="odd-input-wrapper">
-                    <input type="number" id="bigOddInput" placeholder="e.g. 45.50" step="0.1">
-                    <button class="btn-generate" onclick="generateSignals()">
-                        <span id="btnText">Generate</span>
-                        <div class="loader" id="btnLoader"></div>
-                    </button>
+            <div class="control-panel">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-gamepad"></i> Select Platform</label>
+                    <select id="gamePlatform">
+                        <option value="aviator">Aviator</option>
+                        <option value="jetx">JetX</option>
+                        <option value="luckyjet">Lucky Jet</option>
+                    </select>
                 </div>
-            </div>
-
-            <!-- Signals 4 Targets Section -->
-            <div class="signals-header-bar">
-                <span><i class="fa-solid fa-chart-line" style="color: #00ff88;"></i> Target Signals (4 Rounds)</span>
-                <span class="accuracy-pill">99.4% Acc</span>
-            </div>
-
-            <!-- 2x2 Grid Layout for Signals -->
-            <div class="signals-grid">
-                <!-- Signal 1 -->
-                <div class="signal-card active">
-                    <div class="signal-top-row">
-                        <span class="signal-step">Round 01</span>
-                        <span class="signal-time" id="time1"><i class="fa-regular fa-clock"></i> --:--</span>
-                    </div>
-                    <div class="signal-value" id="sig1">--.--x</div>
-                </div>
-
-                <!-- Signal 2 -->
-                <div class="signal-card active">
-                    <div class="signal-top-row">
-                        <span class="signal-step">Round 02</span>
-                        <span class="signal-time" id="time2"><i class="fa-regular fa-clock"></i> --:--</span>
-                    </div>
-                    <div class="signal-value" id="sig2">--.--x</div>
-                </div>
-
-                <!-- Signal 3 -->
-                <div class="signal-card active">
-                    <div class="signal-top-row">
-                        <span class="signal-step">Round 03</span>
-                        <span class="signal-time" id="time3"><i class="fa-regular fa-clock"></i> --:--</span>
-                    </div>
-                    <div class="signal-value" id="sig3">--.--x</div>
-                </div>
-
-                <!-- Signal 4 -->
-                <div class="signal-card active">
-                    <div class="signal-top-row">
-                        <span class="signal-step">Round 04</span>
-                        <span class="signal-time" id="time4"><i class="fa-regular fa-clock"></i> --:--</span>
-                    </div>
-                    <div class="signal-value" id="sig4">--.--x</div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <label><i class="fa-solid fa-chart-line"></i> Chart Last Max Odd</label>
+                    <input type="text" id="maxOddInput" value="14.20" placeholder="Enter last big odd">
                 </div>
             </div>
 
-            <div class="footer-note">Prakash Academy AI Prediction Engine v2.4</div>
+            <button class="btn-generate" id="genBtn" onclick="runPrediction()">
+                <i class="fa-solid fa-arrows-rotate"></i> GENERATE SIGNALS
+            </button>
+
+            <div class="signals-grid" id="signalsGrid" style="display: none;">
+                <div class="signal-card vip-target" id="card1">
+                    <div class="card-top">
+                        <span class="slot-tag">SLOT #01</span>
+                        <span class="time-tag" id="time1">--:--</span>
+                    </div>
+                    <div class="odds-value" id="odd1">--</div>
+                    <div class="card-bottom">
+                        <span class="accuracy" id="acc1">Acc: --</span>
+                        <span class="badge badge-vip" id="badge1">3X+ VIP</span>
+                    </div>
+                </div>
+
+                <div class="signal-card" id="card2">
+                    <div class="card-top">
+                        <span class="slot-tag">SLOT #02</span>
+                        <span class="time-tag" id="time2">--:--</span>
+                    </div>
+                    <div class="odds-value" id="odd2">--</div>
+                    <div class="card-bottom">
+                        <span class="accuracy" id="acc2">Acc: --</span>
+                        <span class="badge badge-safe" id="badge2">SAFE</span>
+                    </div>
+                </div>
+
+                <div class="signal-card vip-target" id="card3">
+                    <div class="card-top">
+                        <span class="slot-tag">SLOT #03</span>
+                        <span class="time-tag" id="time3">--:--</span>
+                    </div>
+                    <div class="odds-value" id="odd3">--</div>
+                    <div class="card-bottom">
+                        <span class="accuracy" id="acc3">Acc: --</span>
+                        <span class="badge badge-vip" id="badge3">3X+ VIP</span>
+                    </div>
+                </div>
+
+                <div class="signal-card" id="card4">
+                    <div class="card-top">
+                        <span class="slot-tag">SLOT #04</span>
+                        <span class="time-tag" id="time4">--:--</span>
+                    </div>
+                    <div class="odds-value" id="odd4">--</div>
+                    <div class="card-bottom">
+                        <span class="accuracy" id="acc4">Acc: --</span>
+                        <span class="badge badge-safe" id="badge4">SAFE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn-action btn-copy" onclick="copyAllSignals()">
+                    <i class="fa-solid fa-copy"></i> Copy Signals
+                </button>
+                <a href="https://whatsapp.com" target="_blank" class="btn-action btn-whatsapp">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+
+            <div class="footer-credit">
+                Lakshan Service Sri Lanka © 2026
+            </div>
         </div>
+
     </div>
 
     <script>
+        let currentSignalsData = [];
+
+        // Startup Loader Handler
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loaderScreen');
+                const mainApp = document.getElementById('mainApp');
+                
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                
+                mainApp.classList.add('show');
+            }, 1800);
+        });
+
+        // Login Logic with Active Credentials (123456789 & 123)
         function handleLogin() {
-            const pass = document.getElementById('passwordInput').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
+            let enteredId = document.getElementById('playerIdInput').value.trim();
+            let enteredPass = document.getElementById('passwordInput').value.trim();
+            let errorBox = document.getElementById('errorMsg');
 
-            if (pass === 'prakashacademysrilanka') {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appScreen').style.display = 'block';
-                errorMsg.style.display = 'none';
+            if (enteredId === "123456789" && enteredPass === "123") {
+                errorBox.style.display = 'none';
+                
+                // Switch to dashboard smoothly
+                document.getElementById('loginView').classList.remove('active-view');
+                document.getElementById('dashboardView').classList.add('active-view');
             } else {
-                errorMsg.style.display = 'block';
-                document.getElementById('passwordInput').style.borderColor = '#ff3333';
+                errorBox.style.display = 'block';
             }
         }
 
+        // Logout Function
         function handleLogout() {
-            document.getElementById('appScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('passwordInput').style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            if(confirm("Are you sure you want to logout?")) {
+                document.getElementById('playerIdInput').value = '';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('errorMsg').style.display = 'none';
+
+                document.getElementById('dashboardView').classList.remove('active-view');
+                document.getElementById('loginView').classList.add('active-view');
+            }
         }
 
-        function generateSignals() {
-            const inputVal = document.getElementById('bigOddInput').value;
-            const btnText = document.getElementById('btnText');
-            const btnLoader = document.getElementById('btnLoader');
+        // Generate Signals Logic
+        function runPrediction() {
+            const btn = document.getElementById('genBtn');
+            const grid = document.getElementById('signalsGrid');
+            let maxOddVal = parseFloat(document.getElementById('maxOddInput').value) || 6.0;
 
-            if (!inputVal || inputVal <= 1) {
-                alert('කරුණාකර වලංගු ලොකු Odd අගයක් ඇතුළත් කරන්න!');
+            btn.classList.add('spinning');
+            btn.disabled = true;
+
+            grid.style.display = 'grid';
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`card${i}`).classList.remove('active');
             }
-
-            // Loading animation
-            btnText.style.display = 'none';
-            btnLoader.style.display = 'block';
 
             setTimeout(() => {
-                let baseOdd = parseFloat(inputVal) || (Math.random() * (60 - 20) + 20).toFixed(2);
-                
-                let now = new Date();
-                function addMinutes(date, minutes) {
-                    return new Date(date.getTime() + minutes * 60000);
+                btn.classList.remove('spinning');
+                btn.disabled = false;
+
+                let currentTime = new Date();
+                currentSignalsData = [];
+
+                for (let i = 1; i <= 4; i++) {
+                    currentTime.setMinutes(currentTime.getMinutes() + Math.floor(Math.random() * 2) + 2);
+                    let timeFormatted = currentTime.toTimeString().substring(0, 5);
+                    document.getElementById(`time${i}`).innerText = timeFormatted;
+
+                    let oddVal, accVal, targetType;
+
+                    if (i === 1 || i === 3) {
+                        oddVal = (3.2 + (maxOddVal % 3.5) + Math.random() * 3.5).toFixed(2) + 'x';
+                        accVal = (97 + Math.random() * 2.5).toFixed(1) + '%';
+                        targetType = '3X+ VIP';
+                    } else {
+                        oddVal = (1.25 + Math.random() * 1.55).toFixed(2) + 'x';
+                        accVal = (91 + Math.random() * 5).toFixed(1) + '%';
+                        targetType = 'SAFE';
+                    }
+
+                    document.getElementById(`odd${i}`).innerText = oddVal;
+                    document.getElementById(`acc${i}`).innerText = "Acc: " + accVal;
+
+                    currentSignalsData.push(`Slot #${i} [${timeFormatted}] - Target: ${oddVal} (${targetType}) Acc: ${accVal}`);
+
+                    setTimeout((index) => {
+                        document.getElementById(`card${index}`).classList.add('active');
+                    }, i * 150, i);
                 }
-
-                let t1 = addMinutes(now, 2);
-                let t2 = addMinutes(now, 5);
-                let t3 = addMinutes(now, 9);
-                let t4 = addMinutes(now, 14);
-
-                function formatTime(d) {
-                    return d.toTimeString().split(' ')[0].substring(0, 5);
-                }
-
-                document.getElementById('time1').innerHTML = `<i class="fa-regular fa-clock"></i> ${formatTime(t1)}`;
-                document.getElementById('time2').innerHTML = `<i class="fa-regular fa-clock"></i> ${formatTime(t2)}`;
-                document.getElementById('time3').innerHTML = `<i class="fa-regular fa-clock"></i> ${formatTime(t3)}`;
-                document.getElementById('time4').innerHTML = `<i class="fa-regular fa-clock"></i> ${formatTime(t4)}`;
-
-                let s1 = (Math.random() * (2.2 - 1.2) + 1.2).toFixed(2) + 'x';
-                let s2 = (Math.random() * (4.5 - 2.3) + 2.3).toFixed(2) + 'x';
-                let s3 = (Math.random() * (9.0 - 4.6) + 4.6).toFixed(2) + 'x';
-                let s4 = (parseFloat(baseOdd)).toFixed(2) + 'x';
-
-                document.getElementById('sig1').innerText = s1;
-                document.getElementById('sig2').innerText = s2;
-                document.getElementById('sig3').innerText = s3;
-                document.getElementById('sig4').innerText = s4;
-
-                btnText.style.display = 'block';
-                btnLoader.style.display = 'none';
             }, 1000);
+        }
+
+        // Copy All Signals Function
+        function copyAllSignals() {
+            if (currentSignalsData.length === 0) {
+                alert("Please click 'GENERATE SIGNALS' first!");
+                return;
+            }
+
+            const platform = document.getElementById('gamePlatform').value.toUpperCase();
+            let textToCopy = `🔥 LAKSHAN SERVICE - ${platform} SIGNALS 🔥\n\n` + currentSignalsData.join('\n') + `\n\n📌 Join Official WhatsApp Channel for more!`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("✅ All Signals Copied Successfully!");
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
         }
     </script>
 </body>
