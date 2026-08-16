@@ -1,734 +1,1525 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lakshan Service - Elite Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lakshan Service - Elite Predictor</title>
 
-        body {
-            background: #08080a;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 100%, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            overflow-x: hidden;
-        }
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&family=Space+Grotesk:wght@500;700&display=swap');
 
-        /* --- ROYAL LOADER SCREEN WITH LOGO ANIMATION --- */
-        #loaderScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #08080a;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Space Grotesk', sans-serif;
+    }
 
-        .loader-logo-container {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            border: 2px solid rgba(191, 149, 63, 0.4);
-            box-shadow: 0 0 25px rgba(191, 149, 63, 0.3), inset 0 0 15px rgba(220, 20, 60, 0.2);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            animation: pulseGlow 1.5s ease-in-out infinite alternate;
-            background: #121216;
-        }
+    body {
+        min-height: 100vh;
+        background: #020617;
+        background-image: 
+            radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.15) 0%, transparent 45%),
+            radial-gradient(circle at 85% 85%, rgba(14, 165, 233, 0.1) 0%, transparent 45%);
+        color: #f0f9ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+    }
 
-        .loader-logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            animation: rotateLogo 8s linear infinite;
-        }
+    /* Full Screen Entry Loading Overlay */
+    #page-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #020617;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
 
-        @keyframes pulseGlow {
-            0% { transform: scale(0.95); box-shadow: 0 0 15px rgba(191, 149, 63, 0.2); }
-            100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(191, 149, 63, 0.6); }
-        }
+    #page-loader.fade-out {
+        opacity: 0;
+        visibility: hidden;
+    }
 
-        @keyframes rotateLogo {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+    .loader-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(56, 189, 248, 0.2);
+        border-top: 4px solid #38bdf8;
+        border-radius: 50%;
+        animation: spinLoader 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        margin-bottom: 20px;
+        box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+    }
 
-        .loader-brand {
-            font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            text-align: center;
-        }
+    @keyframes spinLoader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 
-        .loader-text {
-            font-size: 0.7rem;
-            color: #aaa;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            font-family: 'Rajdhani', sans-serif;
-        }
+    .loader-text {
+        font-family: 'Outfit', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 50%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        animation: pulseText 1.2s ease-in-out infinite alternate;
+    }
 
-        /* --- MAIN APP WRAPPER --- */
-        .app-wrapper {
-            width: 100%;
-            max-width: 440px;
-            background: rgba(15, 15, 20, 0.85);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(191, 149, 63, 0.3);
-            border-radius: 26px;
-            padding: 22px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(220, 20, 60, 0.15);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.7s ease;
-        }
+    @keyframes pulseText {
+        0% { opacity: 0.5; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1.02); }
+    }
 
-        .app-wrapper.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    /* Login Modal Overlay */
+    #login-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(2, 6, 23, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 9998;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
 
-        .view-section { display: none; }
-        .view-section.active-view { display: block; }
+    #login-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
 
-        /* --- LOGIN SCREEN --- */
-        .login-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .login-content {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 28px;
+        padding: 30px 24px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
+                    0 0 40px rgba(56, 189, 248, 0.2);
+        animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-        .login-header h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #bf953f, #fbf5b7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
+    .login-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 20px;
+        text-align: left;
+    }
 
-        .login-header p {
-            font-size: 0.7rem;
-            color: #888;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 1px;
-        }
+    .login-input-group label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #bae6fd;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
 
-        .login-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 15px;
-        }
+    .login-input-group input {
+        width: 100%;
+        background: #020617;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 14px;
+        padding: 14px 16px;
+        color: #f0f9ff;
+        font-family: 'Outfit', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        outline: none;
+        transition: all 0.3s ease;
+    }
 
-        .btn-login {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #bf953f, #aa7c11, #d4af37);
-            border: none;
-            border-radius: 12px;
-            color: #08080a;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-        }
+    .login-input-group input:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5);
-        }
+    .login-btn {
+        width: 100%;
+        margin-top: 20px;
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        border: 1px solid rgba(56, 189, 248, 0.6);
+        color: #ffffff;
+        padding: 14px;
+        border-radius: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+        transition: all 0.3s ease;
+    }
 
-        .error-msg {
-            color: #ff4d4d;
-            font-size: 0.72rem;
-            text-align: center;
-            margin-top: 10px;
-            font-weight: 500;
-            display: none;
-            line-height: 1.4;
-        }
+    .login-btn:hover {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.6);
+    }
 
-        .error-msg a {
-            color: #25d366;
-            text-decoration: underline;
-            font-weight: 700;
-        }
+    .login-error-msg {
+        color: #f43f5e;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 10px;
+        display: none;
+    }
 
-        /* --- DASHBOARD HEADER WITH CIRCULAR LOGO --- */
-        .header-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 12px;
-        }
+    /* Inactive / Activation Notice Modal */
+    #inactive-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(2, 6, 23, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 10005;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
 
-        .brand-flex {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    #inactive-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
 
-        .header-logo-circle {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: 2px solid #bf953f;
-            overflow: hidden;
-            background: #121216;
-            box-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
-        }
+    .inactive-content {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(244, 63, 94, 0.5);
+        border-radius: 28px;
+        padding: 30px 24px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
+                    0 0 40px rgba(244, 63, 94, 0.25);
+        animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-        .header-logo-circle img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .inactive-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
 
-        .logo-area h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #bf953f, #fbf5b7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-        }
+    .inactive-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        color: #f43f5e;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-        .logo-area span {
-            font-size: 0.58rem;
-            color: #dc143c;
-            letter-spacing: 1.2px;
-            font-weight: 700;
-            display: block;
-        }
+    .inactive-desc {
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
 
-        .logout-btn {
-            background: rgba(220, 20, 60, 0.12);
-            color: #ff4d4d;
-            border: 1px solid rgba(220, 20, 60, 0.3);
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .inactive-admin-btn {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+        border: 1px solid rgba(244, 63, 94, 0.6);
+        color: #ffffff;
+        padding: 14px;
+        border-radius: 16px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(244, 63, 94, 0.35);
+        transition: all 0.3s ease;
+    }
 
-        .logout-btn:hover {
-            background: #dc143c;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
-        }
+    .inactive-admin-btn:hover {
+        background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+        box-shadow: 0 10px 25px rgba(244, 63, 94, 0.6);
+        transform: translateY(-2px);
+    }
 
-        /* Control Panel */
-        .control-panel {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 15px;
-        }
+    /* Telegram Popup Modal */
+    #telegram-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
 
-        .input-group {
-            margin-bottom: 10px;
-        }
+    #telegram-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
 
-        .input-group:last-child { margin-bottom: 0; }
+    .modal-content {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 28px;
+        padding: 30px 24px;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
+                    0 0 40px rgba(56, 189, 248, 0.2);
+        animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-        .input-group label {
-            font-size: 0.68rem;
-            color: #bf953f;
-            margin-bottom: 4px;
-            display: block;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.5px;
-        }
+    @keyframes modalScaleUp {
+        from { transform: scale(0.85); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
 
-        select, input {
-            width: 100%;
-            padding: 10px 12px;
-            background: rgba(20, 20, 25, 0.9);
-            border: 1px solid rgba(191, 149, 63, 0.2);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.85rem;
-            outline: none;
-            transition: 0.3s;
-        }
+    .close-modal-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        color: #38bdf8;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
 
-        select option { background: #121216; color: #fff; }
-        select:focus, input:focus {
-            border-color: #bf953f;
-            box-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
-        }
+    .close-modal-btn:hover {
+        background: rgba(56, 189, 248, 0.3);
+        color: #ffffff;
+        transform: rotate(90deg);
+    }
 
-        .btn-generate {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #bf953f, #aa7c11, #d4af37);
-            border: none;
-            border-radius: 12px;
-            color: #08080a;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(191, 149, 63, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
+    .modal-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
 
-        .btn-generate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(191, 149, 63, 0.5);
-        }
+    .modal-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 20px;
+        font-weight: 900;
+        color: #f0f9ff;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
 
-        .btn-generate i { transition: transform 0.8s ease; }
-        .btn-generate.spinning i { transform: rotate(360deg); }
+    .modal-desc {
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
 
-        /* Signals Grid */
-        .signals-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
+    .modal-join-btn {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        border: 1px solid rgba(56, 189, 248, 0.6);
+        color: #ffffff;
+        padding: 14px;
+        border-radius: 16px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+        transition: all 0.3s ease;
+    }
 
-        .signal-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            padding: 11px;
-            position: relative;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    .modal-join-btn:hover {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.6);
+        transform: translateY(-2px);
+    }
 
-        .signal-card.active {
-            opacity: 1;
-            transform: scale(1);
-        }
+    /* Promo Codes Popup Modal */
+    #promo-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(2, 6, 23, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 10001;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
 
-        .signal-card.vip-target {
-            background: linear-gradient(135deg, rgba(191, 149, 63, 0.08), rgba(220, 20, 60, 0.05));
-            border-color: rgba(191, 149, 63, 0.4);
-            box-shadow: inset 0 0 10px rgba(191, 149, 63, 0.1);
-        }
+    #promo-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
 
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
+    .promo-modal-content {
+        width: 100%;
+        max-width: 440px;
+        max-height: 90vh;
+        overflow-y: auto;
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 28px;
+        padding: 26px 20px;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8),
+                    0 0 40px rgba(56, 189, 248, 0.2);
+        animation: modalScaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
-        .slot-tag {
-            font-size: 0.6rem;
-            color: #888;
-            font-family: 'Rajdhani', sans-serif;
-        }
+    .promo-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 18px;
+    }
 
-        .time-tag {
-            font-size: 0.65rem;
-            color: #bf953f;
-            background: rgba(191, 149, 63, 0.1);
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
+    .promo-item {
+        background: rgba(2, 6, 23, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 18px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        transition: all 0.3s ease;
+    }
 
-        .odds-value {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #fff;
-            margin: 3px 0;
-        }
+    .promo-item:hover {
+        border-color: rgba(56, 189, 248, 0.6);
+        background: rgba(14, 116, 144, 0.15);
+    }
 
-        .signal-card.vip-target .odds-value {
-            color: #fbf5b7;
-            text-shadow: 0 0 10px rgba(191, 149, 63, 0.5);
-        }
+    .promo-site-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+    }
 
-        .card-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.6rem;
-        }
+    .promo-logo {
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 4px;
+        flex-shrink: 0;
+    }
 
-        .accuracy { color: #00ff88; font-weight: 600; }
+    .promo-details {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
 
-        .badge {
-            font-size: 0.55rem;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-weight: 700;
-        }
+    .promo-code-text {
+        font-family: 'Outfit', sans-serif;
+        font-size: 15px;
+        font-weight: 900;
+        color: #38bdf8;
+        letter-spacing: 0.5px;
+    }
 
-        .badge-safe { background: rgba(0, 255, 136, 0.12); color: #00ff88; }
-        .badge-vip { background: rgba(220, 20, 60, 0.2); color: #ff4d4d; border: 1px solid rgba(220, 20, 60, 0.3); }
+    .promo-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+    }
 
-        .action-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+    .promo-action-btn {
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .btn-action {
-            flex: 1;
-            padding: 11px;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            text-decoration: none;
-            letter-spacing: 0.5px;
-        }
+    .btn-copy-code {
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #38bdf8;
+    }
 
-        .btn-copy {
-            background: linear-gradient(135deg, #333, #1a1a20);
-            border: 1px solid rgba(191, 149, 63, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+    .btn-copy-code:hover {
+        background: rgba(56, 189, 248, 0.3);
+        color: #ffffff;
+    }
 
-        .btn-copy:hover {
-            background: linear-gradient(135deg, #444, #222);
-            border-color: #bf953f;
-        }
+    .btn-visit-site {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        border: 1px solid rgba(56, 189, 248, 0.5);
+        color: #ffffff;
+    }
 
-        .btn-whatsapp {
-            background: linear-gradient(135deg, #25d366, #128c7e);
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-        }
+    .btn-visit-site:hover {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        transform: translateY(-1px);
+    }
 
-        .btn-whatsapp:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(37, 211, 102, 0.5);
-        }
+    /* Main App Container */
+    .app {
+        width: 100%;
+        max-width: 490px;
+        background: rgba(8, 15, 35, 0.9);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        border-radius: 36px;
+        padding: 28px;
+        box-shadow: 0 35px 70px rgba(0, 0, 0, 0.9),
+                    0 0 60px rgba(56, 189, 248, 0.15);
+        animation: cardFloat 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+    }
 
-        .footer-credit {
-            text-align: center;
-            font-size: 0.62rem;
-            color: #666;
-            letter-spacing: 0.5px;
-        }
-    </style>
+    @keyframes cardFloat {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Category Bar */
+    .category-bar {
+        display: flex;
+        background: #020617;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 18px;
+        padding: 5px;
+        margin-bottom: 22px;
+    }
+
+    .cat-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #94a3b8;
+        cursor: pointer;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cat-btn.active-crash {
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 18px rgba(14, 165, 233, 0.45);
+    }
+
+    .cat-btn.active-aviator {
+        background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 18px rgba(244, 63, 94, 0.45);
+    }
+
+    /* Brand Logo Container */
+    .logo {
+        text-align: center;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .brand-logo-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        background: rgba(15, 23, 42, 0.8);
+        border: 2px solid rgba(56, 189, 248, 0.4);
+        border-radius: 22px;
+        padding: 6px;
+        box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    .logo h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 25px;
+        font-weight: 900;
+        letter-spacing: 1.2px;
+        background: linear-gradient(135deg, #e0f2fe 0%, #38bdf8 50%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .logo p {
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.2px;
+        margin-top: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Input Section */
+    .input-section {
+        background: rgba(14, 116, 144, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 22px;
+        padding: 18px;
+        margin-bottom: 18px;
+        transition: all 0.4s ease;
+    }
+
+    .input-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #bae6fd;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        display: block;
+        text-transform: uppercase;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .input-group select,
+    .input-group input {
+        width: 100%;
+        background: #020617;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 16px;
+        padding: 15px 18px;
+        color: #f0f9ff;
+        font-family: 'Outfit', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .input-group select option {
+        background: #0f172a;
+        color: #f0f9ff;
+    }
+
+    .input-group select:focus,
+    .input-group input:focus {
+        border-color: var(--theme-color, #38bdf8);
+        box-shadow: 0 0 20px var(--theme-shadow, rgba(56, 189, 248, 0.3));
+    }
+
+    .button {
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        padding: 15px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #ffffff;
+        background: var(--btn-bg, linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%));
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: var(--btn-shadow, 0 8px 22px rgba(14, 165, 233, 0.4));
+        text-transform: uppercase;
+    }
+
+    .button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--btn-hover-shadow, 0 12px 28px rgba(14, 165, 233, 0.6));
+        filter: brightness(1.1);
+    }
+
+    /* Signals Grid */
+    .signals-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #bae6fd;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .signals-title span {
+        color: var(--theme-color, #38bdf8);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .signals-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .signal-card {
+        background: linear-gradient(145deg, #0f172a 0%, #020617 100%);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 22px;
+        padding: 18px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .signal-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 3px;
+        background: var(--card-line, linear-gradient(90deg, #38bdf8, #2563eb));
+        transition: background 0.4s ease;
+    }
+
+    .signal-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .signal-card-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+    }
+
+    .signal-card-time {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #bae6fd;
+        background: rgba(56, 189, 248, 0.15);
+        padding: 4px 9px;
+        border-radius: 10px;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        letter-spacing: 0.5px;
+        transition: all 0.4s ease;
+    }
+
+    .signal-card-odds {
+        font-family: 'Outfit', sans-serif;
+        font-size: 30px;
+        font-weight: 900;
+        color: var(--theme-color, #38bdf8);
+        text-shadow: 0 0 20px var(--theme-glow, rgba(56, 189, 248, 0.4));
+        margin: 6px 0;
+        transition: color 0.4s ease, text-shadow 0.4s ease;
+    }
+
+    .signal-card-conf {
+        font-size: 12px;
+        color: #bae6fd;
+        font-weight: 600;
+    }
+
+    .copy-btn {
+        width: 100%;
+        margin-bottom: 12px;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        border-radius: 16px;
+        padding: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #f0f9ff;
+        background: rgba(14, 116, 144, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .copy-btn:hover {
+        background: rgba(56, 189, 248, 0.2);
+        border-color: var(--theme-color, #38bdf8);
+        box-shadow: 0 0 15px var(--theme-shadow, rgba(56, 189, 248, 0.3));
+    }
+
+    .promo-btn {
+        width: 100%;
+        margin-bottom: 12px;
+        border: 1px solid rgba(251, 191, 36, 0.5);
+        border-radius: 16px;
+        padding: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 6px 20px rgba(217, 119, 6, 0.35);
+    }
+
+    .promo-btn:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 10px 25px rgba(217, 119, 6, 0.6);
+        filter: brightness(1.1);
+    }
+
+    .telegram-btn {
+        width: 100%;
+        margin-bottom: 12px;
+        border: 1px solid rgba(56, 189, 248, 0.6);
+        border-radius: 16px;
+        padding: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+    }
+
+    .telegram-btn:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.6);
+        filter: brightness(1.1);
+    }
+
+    .admin-btn {
+        width: 100%;
+        margin-bottom: 12px;
+        border: 1px solid var(--admin-border, rgba(56, 189, 248, 0.6));
+        border-radius: 16px;
+        padding: 14px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #ffffff;
+        background: var(--admin-bg, linear-gradient(135deg, #0284c7 0%, #0369a1 100%));
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        box-shadow: var(--admin-shadow, 0 6px 20px rgba(14, 165, 233, 0.35));
+    }
+
+    .admin-btn:hover {
+        transform: translateY(-2px);
+        background: var(--admin-hover-bg, linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        box-shadow: var(--admin-hover-shadow, 0 10px 25px rgba(14, 165, 233, 0.6));
+        filter: brightness(1.1);
+    }
+
+    .status {
+        text-align: center;
+        padding: 13px;
+        border-radius: 16px;
+        background: rgba(14, 116, 144, 0.2);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        color: #f0f9ff;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        transition: all 0.4s ease;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 10px;
+        font-size: 11px;
+        color: #64748b;
+        letter-spacing: 1px;
+    }
+
+    @keyframes pulseCard {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.04); border-color: var(--theme-color, #38bdf8); box-shadow: 0 0 30px var(--theme-glow, rgba(56, 189, 248, 0.25)); }
+        100% { transform: scale(1); }
+    }
+    .pulse {
+        animation: pulseCard 0.45s ease-in-out;
+    }
+</style>
 </head>
+
 <body>
 
-    <!-- ROYAL LOADER WITH CLOUDINARY LOGO -->
-    <div id="loaderScreen">
-        <div class="loader-logo-container">
-            <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786468519/file_00000000e9f0820b9005fecd0575db3c_ncbsvw.png" alt="Logo">
-        </div>
-        <div class="loader-brand">LAKSHAN SERVICE</div>
-        <div class="loader-text">Loading Official System...</div>
-    </div>
+<!-- Full Screen Loading Overlay -->
+<div id="page-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading System...</div>
+</div>
 
-    <!-- MAIN APP CONTAINER -->
-    <div class="app-wrapper" id="mainApp">
+<!-- Login / Authentication Modal -->
+<div id="login-modal">
+    <div class="login-content">
+        <div class="modal-icon" style="display: flex; justify-content: center; margin-bottom: 8px;">
+            <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909048/file_0000000096dc8207a6343125e69f034e_or66za.png" alt="Logo" style="width: 50px; height: 50px; object-fit: contain;">
+        </div>
+        <div class="modal-title" style="font-size: 18px;">Player Verification</div>
+        <div class="modal-desc" style="font-size: 12px; margin-bottom: 15px;">පද්ධතියට පිවිසීමට ඔබේ Player ID සහ Password ඇතුළත් කරන්න.</div>
         
-        <!-- VIEW 1: LOGIN SCREEN -->
-        <div id="loginView" class="view-section active-view">
-            <div class="login-header">
-                <h2>MEMBER ACCESS</h2>
-                <p>LAKSHAN SERVICE ELITE PORTAL</p>
-            </div>
-            <div class="login-box">
-                <div class="input-group">
-                    <label><i class="fa-solid fa-id-badge"></i> Player ID</label>
-                    <input type="text" id="playerIdInput" placeholder="Enter Player ID">
-                </div>
-                <div class="input-group" style="margin-top: 12px;">
-                    <label><i class="fa-solid fa-lock"></i> Password</label>
-                    <input type="password" id="passwordInput" placeholder="Enter Password">
-                </div>
-                <div class="error-msg" id="errorMsg">
-                    ❌ වැරදි විස්තරයකි! කරුණාකර <a href="https://whatsapp.com" target="_blank">Admin සම්බන්ධ කරගෙන</a> ගිනුම සක්‍රිය කරගන්න.
-                </div>
-            </div>
-            <button class="btn-login" onclick="handleLogin()">
-                <i class="fa-solid fa-right-to-bracket"></i> LOGIN SYSTEM
-            </button>
-            <a href="https://whatsapp.com" target="_blank" class="btn-action btn-whatsapp" style="width:100%;">
-                <i class="fa-brands fa-whatsapp"></i> Join WhatsApp Channel
-            </a>
+        <div class="login-input-group">
+            <label>Player ID</label>
+            <input type="text" id="loginPlayerId" placeholder="උදා: 123456789">
         </div>
+        <div class="login-input-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Password ඇතුළත් කරන්න">
+        </div>
+        
+        <div class="login-error-msg" id="loginErrorMsg">❌ වැරදි විස්තරයකි! නැවත උත්සාහ කරන්න.</div>
+        
+        <button class="login-btn" onclick="verifyLogin()">LOGIN SYSTEM</button>
+    </div>
+</div>
 
-        <!-- VIEW 2: DASHBOARD SCREEN -->
-        <div id="dashboardView" class="view-section">
-            <div class="header-box">
-                <div class="brand-flex">
-                    <div class="header-logo-circle">
-                        <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786468519/file_00000000e9f0820b9005fecd0575db3c_ncbsvw.png" alt="Logo">
-                    </div>
-                    <div class="logo-area">
-                        <h1>LAKSHAN SERVICE</h1>
-                        <span>SRI LANKA ELITE</span>
-                    </div>
+<!-- Inactive / Activation Required Notice Modal -->
+<div id="inactive-modal">
+    <div class="inactive-content">
+        <div class="inactive-icon">⚠️</div>
+        <div class="inactive-title">ID Not Activated</div>
+        <div class="inactive-desc">ඔබගේ Player ID එක තවමත් සක්‍රිය (Active) කර නොමැත. කරුණාකර ඇඩ්මින් අමතා ඔබගේ Player ID එක සක්‍රිය කර ගන්න!</div>
+        <a href="https://t.me/Lakshan_Service_Aviator_Crash" target="_blank" class="inactive-admin-btn">
+            💬 CONTACT ADMIN TO ACTIVATE
+        </a>
+    </div>
+</div>
+
+<!-- Telegram Notice Popup Modal -->
+<div id="telegram-modal">
+    <div class="modal-content">
+        <button class="close-modal-btn" onclick="closeTelegramModal()">✕</button>
+        <div class="modal-icon" style="display: flex; justify-content: center; margin-bottom: 12px;">
+            <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909048/file_0000000096dc8207a6343125e69f034e_or66za.png" alt="Logo" style="width: 50px; height: 50px; object-fit: contain;">
+        </div>
+        <div class="modal-title">Join Telegram Channel</div>
+        <div class="modal-desc">නිවැරදි සිග්නල් සහ විශේෂ යාවත්කාලීන කිරීම් ලබා ගැනීමට අපගේ නිල ටෙලිග්‍රාම් නාලිකාව සමඟ එකතු වන්න!</div>
+        <a href="https://t.me/Lakshan_Service_Aviator_Crash" target="_blank" class="modal-join-btn">
+            ✈️ JOIN TELEGRAM CHANNEL
+        </a>
+    </div>
+</div>
+
+<!-- Promo Codes Popup Modal -->
+<div id="promo-modal">
+    <div class="promo-modal-content">
+        <button class="close-modal-btn" onclick="closePromoModal()">✕</button>
+        <div class="modal-icon" style="display: flex; justify-content: center; margin-bottom: 8px;">
+            <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909048/file_0000000096dc8207a6343125e69f034e_or66za.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;">
+        </div>
+        <div class="modal-title" style="font-size: 18px;">Exclusive Promo Codes</div>
+        <div class="modal-desc" style="margin-bottom: 12px; font-size: 12px;">පහත සඳහන් ඔට්ටු අල්ලන සයිට් සඳහා විශේෂ ප්‍රොමො කෝඩ් භාවිතා කර වැඩි වාසි ලබා ගන්න!</div>
+        
+        <div class="promo-list">
+            <!-- 1XBet -->
+            <div class="promo-item">
+                <div class="promo-site-info">
+                    <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909042/1xbet-logo-png_seeklogo-355459_gkt36n.png" alt="1XBet" class="promo-logo">
+                    <span class="promo-code-text" id="code-1xbet">SADUNIKA</span>
                 </div>
-                <button class="logout-btn" onclick="handleLogout()">
-                    <i class="fa-solid fa-power-off"></i> Logout
-                </button>
-            </div>
-
-            <div class="control-panel">
-                <div class="input-group">
-                    <label><i class="fa-solid fa-gamepad"></i> Select Platform</label>
-                    <select id="gamePlatform">
-                        <option value="aviator">Aviator</option>
-                        <option value="jetx">JetX</option>
-                        <option value="luckyjet">Lucky Jet</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <label><i class="fa-solid fa-chart-line"></i> Chart Last Max Odd</label>
-                    <input type="text" id="maxOddInput" value="14.20" placeholder="Enter last big odd">
-                </div>
-            </div>
-
-            <button class="btn-generate" id="genBtn" onclick="runPrediction()">
-                <i class="fa-solid fa-arrows-rotate"></i> GENERATE SIGNALS
-            </button>
-
-            <div class="signals-grid" id="signalsGrid" style="display: none;">
-                <div class="signal-card vip-target" id="card1">
-                    <div class="card-top">
-                        <span class="slot-tag">SLOT #01</span>
-                        <span class="time-tag" id="time1">--:--</span>
-                    </div>
-                    <div class="odds-value" id="odd1">--</div>
-                    <div class="card-bottom">
-                        <span class="accuracy" id="acc1">Acc: --</span>
-                        <span class="badge badge-vip" id="badge1">3X+ VIP</span>
-                    </div>
-                </div>
-
-                <div class="signal-card" id="card2">
-                    <div class="card-top">
-                        <span class="slot-tag">SLOT #02</span>
-                        <span class="time-tag" id="time2">--:--</span>
-                    </div>
-                    <div class="odds-value" id="odd2">--</div>
-                    <div class="card-bottom">
-                        <span class="accuracy" id="acc2">Acc: --</span>
-                        <span class="badge badge-safe" id="badge2">SAFE</span>
-                    </div>
-                </div>
-
-                <div class="signal-card vip-target" id="card3">
-                    <div class="card-top">
-                        <span class="slot-tag">SLOT #03</span>
-                        <span class="time-tag" id="time3">--:--</span>
-                    </div>
-                    <div class="odds-value" id="odd3">--</div>
-                    <div class="card-bottom">
-                        <span class="accuracy" id="acc3">Acc: --</span>
-                        <span class="badge badge-vip" id="badge3">3X+ VIP</span>
-                    </div>
-                </div>
-
-                <div class="signal-card" id="card4">
-                    <div class="card-top">
-                        <span class="slot-tag">SLOT #04</span>
-                        <span class="time-tag" id="time4">--:--</span>
-                    </div>
-                    <div class="odds-value" id="odd4">--</div>
-                    <div class="card-bottom">
-                        <span class="accuracy" id="acc4">Acc: --</span>
-                        <span class="badge badge-safe" id="badge4">SAFE</span>
-                    </div>
+                <div class="promo-actions">
+                    <button class="promo-action-btn btn-copy-code" onclick="copyPromoCode('SADUNIKA', this)">Copy</button>
+                    <a href="https://1xbet.com" target="_blank" class="promo-action-btn btn-visit-site">Register</a>
                 </div>
             </div>
 
-            <div class="action-row">
-                <button class="btn-action btn-copy" onclick="copyAllSignals()">
-                    <i class="fa-solid fa-copy"></i> Copy Signals
-                </button>
-                <a href="https://whatsapp.com" target="_blank" class="btn-action btn-whatsapp">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                </a>
+            <!-- 888 Starz -->
+            <div class="promo-item">
+                <div class="promo-site-info">
+                    <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909042/images_iloiko.jpg" alt="888 Starz" class="promo-logo">
+                    <span class="promo-code-text" id="code-888starz">LAKSHAN4</span>
+                </div>
+                <div class="promo-actions">
+                    <button class="promo-action-btn btn-copy-code" onclick="copyPromoCode('LAKSHAN4', this)">Copy</button>
+                    <a href="https://888starz.com" target="_blank" class="promo-action-btn btn-visit-site">Register</a>
+                </div>
             </div>
 
-            <div class="footer-credit">
-                Lakshan Service Sri Lanka © 2026
+            <!-- Melbet -->
+            <div class="promo-item">
+                <div class="promo-site-info">
+                    <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909042/images_5_xqeooh.jpg" alt="Melbet" class="promo-logo">
+                    <span class="promo-code-text" id="code-melbet">MADUWA</span>
+                </div>
+                <div class="promo-actions">
+                    <button class="promo-action-btn btn-copy-code" onclick="copyPromoCode('MADUWA', this)">Copy</button>
+                    <a href="https://melbet.com" target="_blank" class="promo-action-btn btn-visit-site">Register</a>
+                </div>
+            </div>
+
+            <!-- DBBET -->
+            <div class="promo-item">
+                <div class="promo-site-info">
+                    <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909042/images_1_wjhdis.png" alt="DBBET" class="promo-logo">
+                    <span class="promo-code-text" id="code-dbbet">PRAKASH4</span>
+                </div>
+                <div class="promo-actions">
+                    <button class="promo-action-btn btn-copy-code" onclick="copyPromoCode('PRAKASH4', this)">Copy</button>
+                    <a href="https://dbbet.com" target="_blank" class="promo-action-btn btn-visit-site">Register</a>
+                </div>
+            </div>
+
+            <!-- Paripulse -->
+            <div class="promo-item">
+                <div class="promo-site-info">
+                    <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909042/images_2_x5jaao.png" alt="Paripulse" class="promo-logo">
+                    <span class="promo-code-text" id="code-paripulse">99WIN</span>
+                </div>
+                <div class="promo-actions">
+                    <button class="promo-action-btn btn-copy-code" onclick="copyPromoCode('99WIN', this)">Copy</button>
+                    <a href="https://paripulse.com" target="_blank" class="promo-action-btn btn-visit-site">Register</a>
+                </div>
             </div>
         </div>
 
     </div>
+</div>
 
-    <script>
-        let currentSignalsData = [];
+<div class="app" id="appThemeContainer">
 
-        // Startup Loader Handler
-        window.addEventListener('load', () => {
+    <!-- Category Bar -->
+    <div class="category-bar">
+        <button class="cat-btn active-crash" id="btnCrash" onclick="switchCategory('crash')">Crash Signal</button>
+        <button class="cat-btn" id="btnAviator" onclick="switchCategory('aviator')">Aviator Signal</button>
+    </div>
+
+    <!-- Main App Logo Section -->
+    <div class="logo">
+        <img src="https://res.cloudinary.com/lxpwsptv/image/upload/v1786909048/file_0000000096dc8207a6343125e69f034e_or66za.png" alt="App Logo" class="brand-logo-img">
+        <div>
+            <h1 id="appTitle">LAKSHAN SERVICE</h1>
+            <p id="appSubtitle">Neural Crash Multiplier System</p>
+        </div>
+    </div>
+
+    <!-- Input Section -->
+    <div class="input-section" id="inputSectionBox">
+        <label class="input-label" id="inputLabelText">Select Platform & Enter Odds</label>
+        <div class="input-group">
+            <select id="bettingPlatformSelect" onchange="updateSelectedPlatformPromo()">
+                <option value="1XBet" data-promo="SADUNIKA">1XBet (Promo: SADUNIKA)</option>
+                <option value="888Starz" data-promo="LAKSHAN4">888Starz (Promo: LAKSHAN4)</option>
+                <option value="Melbet" data-promo="MADUWA">Melbet (Promo: MADUWA)</option>
+                <option value="DBBET" data-promo="PRAKASH4">DBBET (Promo: PRAKASH4)</option>
+                <option value="Paripulse" data-promo="99WIN">Paripulse (Promo: 99WIN)</option>
+            </select>
+            <div id="selectedPlatformPromoDisplay" style="font-size: 12px; font-weight: 700; color: #38bdf8; background: rgba(2, 6, 23, 0.6); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3); display: flex; justify-content: space-between; align-items: center;">
+                <span>🎁 Promo Code: <strong id="promoCodeVal" style="color: #ffffff; letter-spacing: 0.5px;">SADUNIKA</strong></span>
+                <button onclick="copyCurrentSelectedPromo()" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase;">Copy Code</button>
+            </div>
+            <input type="number" id="cashoutInput" step="0.01" placeholder="උදා: 2.45" />
+            <button class="button" onclick="generateSignals()">GENERATED</button>
+        </div>
+    </div>
+
+    <div class="status" id="statusText">
+        System active • Ready for computation
+    </div>
+
+    <!-- 4 Signals Grid -->
+    <div class="signals-title">
+        Target Signals Matrix <span id="matrixTargetText">Target: 3.00x+</span>
+    </div>
+
+    <div class="signals-grid">
+        <div class="signal-card" id="card1">
+            <div class="signal-card-header">
+                <span class="signal-card-label">Signal 01</span>
+                <span class="signal-card-time" id="time1">--:--:--</span>
+            </div>
+            <div class="signal-card-odds" id="sig1">--.--x</div>
+            <div class="signal-card-conf" id="conf1">Conf: --%</div>
+        </div>
+        <div class="signal-card" id="card2">
+            <div class="signal-card-header">
+                <span class="signal-card-label">Signal 02</span>
+                <span class="signal-card-time" id="time2">--:--:--</span>
+            </div>
+            <div class="signal-card-odds" id="sig2">--.--x</div>
+            <div class="signal-card-conf" id="conf2">Conf: --%</div>
+        </div>
+        <div class="signal-card" id="card3">
+            <div class="signal-card-header">
+                <span class="signal-card-label">Signal 03</span>
+                <span class="signal-card-time" id="time3">--:--:--</span>
+            </div>
+            <div class="signal-card-odds" id="sig3">--.--x</div>
+            <div class="signal-card-conf" id="conf3">Conf: --%</div>
+        </div>
+        <div class="signal-card" id="card4">
+            <div class="signal-card-header">
+                <span class="signal-card-label">Signal 04</span>
+                <span class="signal-card-time" id="time4">--:--:--</span>
+            </div>
+            <div class="signal-card-odds" id="sig4">--.--x</div>
+            <div class="signal-card-conf" id="conf4">Conf: --%</div>
+        </div>
+    </div>
+
+    <!-- Copy Button -->
+    <button class="copy-btn" onclick="copySignals()">
+        📋 COPY SIGNALS (සිග්නල් කොපි කරන්න)
+    </button>
+
+    <!-- Promo Code Button -->
+    <button class="promo-btn" onclick="openPromoModal()">
+        🎁 PROMO CODE (ප්‍රොමො කෝඩ්ස්)
+    </button>
+
+    <!-- Join Now Telegram Channel Button -->
+    <a href="https://t.me/Lakshan_Service_Aviator_Crash" target="_blank" class="telegram-btn" id="telegramButton">
+        ✈️ JOIN NOW TELEGRAM CHANNEL
+    </a>
+
+    <!-- Contact Admin Button -->
+    <a href="https://t.me/Lakshan_Service_Aviator_Crash" target="_blank" class="admin-btn" id="contactAdminButton">
+        💬 CONTACT ADMIN
+    </a>
+
+    <div class="footer" id="footerText">
+        Lakshan Service Engine v8.0 • Secure Interface
+    </div>
+
+</div>
+
+<script>
+// Hide Full Screen Loader and Automatically Show Login Modal on Load
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loader = document.getElementById('page-loader');
+        loader.classList.add('fade-out');
+
+        // Show Login Modal immediately after loading finishes
+        setTimeout(() => {
+            const loginModal = document.getElementById('login-modal');
+            loginModal.classList.add('show');
+        }, 300);
+    }, 900);
+});
+
+// Function to verify login details (Active ID: 123456789, Password: 123)
+function verifyLogin() {
+    const inputId = document.getElementById('loginPlayerId').value.trim();
+    const inputPass = document.getElementById('loginPassword').value.trim();
+    const errorMsg = document.getElementById('loginErrorMsg');
+
+    if (inputId === "123456789" && inputPass === "123") {
+        // Successful login
+        const loginModal = document.getElementById('login-modal');
+        loginModal.classList.remove('show');
+
+        // Show Telegram Notice Modal after successful login
+        setTimeout(() => {
+            const telegramModal = document.getElementById('telegram-modal');
+            telegramModal.classList.add('show');
+        }, 400);
+    } else {
+        // Incorrect login or unactivated ID -> show inactive / contact admin notice
+        const loginModal = document.getElementById('login-modal');
+        loginModal.classList.remove('show');
+
+        setTimeout(() => {
+            const inactiveModal = document.getElementById('inactive-modal');
+            inactiveModal.classList.add('show');
+        }, 300);
+    }
+}
+
+// Function to close the Telegram Modal via the cross button
+function closeTelegramModal() {
+    const modal = document.getElementById('telegram-modal');
+    modal.classList.remove('show');
+}
+
+// Functions to open and close Promo Codes Modal
+function openPromoModal() {
+    const promoModal = document.getElementById('promo-modal');
+    promoModal.classList.add('show');
+}
+
+function closePromoModal() {
+    const promoModal = document.getElementById('promo-modal');
+    promoModal.classList.remove('show');
+}
+
+// Function to update promo code display dynamically when platform selection changes
+function updateSelectedPlatformPromo() {
+    const selectEl = document.getElementById("bettingPlatformSelect");
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const promoCode = selectedOption.getAttribute("data-promo");
+    document.getElementById("promoCodeVal").innerText = promoCode;
+}
+
+// Function to copy currently selected promo code directly from the dropdown area
+function copyCurrentSelectedPromo() {
+    const code = document.getElementById("promoCodeVal").innerText;
+    const statusText = document.getElementById("statusText");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            statusText.innerText = `🎁 Promo Code (${code}) සාර්ථකව කොපි කරගන්නා ලදී!`;
             setTimeout(() => {
-                const loader = document.getElementById('loaderScreen');
-                const mainApp = document.getElementById('mainApp');
-                
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-                
-                mainApp.classList.add('show');
-            }, 1800);
+                statusText.innerText = "System active • Ready for computation";
+            }, 2500);
+        }).catch(() => {
+            statusText.innerText = "❌ කොපි කිරීම අසාර්ථකයි!";
         });
+    }
+}
 
-        // Login Logic
-        function handleLogin() {
-            let enteredId = document.getElementById('playerIdInput').value.trim();
-            let enteredPass = document.getElementById('passwordInput').value.trim();
-            let errorBox = document.getElementById('errorMsg');
-
-            if (enteredId === "123456789" && enteredPass === "123") {
-                errorBox.style.display = 'none';
-                
-                document.getElementById('loginView').classList.remove('active-view');
-                document.getElementById('dashboardView').classList.add('active-view');
-            } else {
-                errorBox.style.display = 'block';
-            }
-        }
-
-        // Logout Function
-        function handleLogout() {
-            if(confirm("Are you sure you want to logout?")) {
-                document.getElementById('playerIdInput').value = '';
-                document.getElementById('passwordInput').value = '';
-                document.getElementById('errorMsg').style.display = 'none';
-
-                document.getElementById('dashboardView').classList.remove('active-view');
-                document.getElementById('loginView').classList.add('active-view');
-            }
-        }
-
-        // Generate Signals Logic
-        function runPrediction() {
-            const btn = document.getElementById('genBtn');
-            const grid = document.getElementById('signalsGrid');
-            let maxOddVal = parseFloat(document.getElementById('maxOddInput').value) || 6.0;
-
-            btn.classList.add('spinning');
-            btn.disabled = true;
-
-            grid.style.display = 'grid';
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`card${i}`).classList.remove('active');
-            }
-
+// Function to copy individual promo codes from modal
+function copyPromoCode(code, btnEl) {
+    const statusText = document.getElementById("statusText");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            let originalText = btnEl.innerText;
+            btnEl.innerText = "Copied!";
+            btnEl.style.background = "#22c55e";
+            btnEl.style.color = "#ffffff";
+            statusText.innerText = `🎁 Promo Code (${code}) සාර්ථකව කොපි කරගන්නා ලදී!`;
             setTimeout(() => {
-                btn.classList.remove('spinning');
-                btn.disabled = false;
+                btnEl.innerText = originalText;
+                btnEl.style.background = "";
+                btnEl.style.color = "";
+            }, 1500);
+        }).catch(() => {
+            statusText.innerText = "❌ කොපි කිරීම අසාර්ථකයි!";
+        });
+    } else {
+        statusText.innerText = "❌ කොපි කිරීම අසාර්ථකයි!";
+    }
+}
 
-                let currentTime = new Date();
-                currentSignalsData = [];
+let currentCategory = 'crash';
 
-                for (let i = 1; i <= 4; i++) {
-                    currentTime.setMinutes(currentTime.getMinutes() + Math.floor(Math.random() * 2) + 2);
-                    let timeFormatted = currentTime.toTimeString().substring(0, 5);
-                    document.getElementById(`time${i}`).innerText = timeFormatted;
+// Apply initial Crash theme CSS variables on load
+document.documentElement.style.setProperty('--theme-color', '#38bdf8');
+document.documentElement.style.setProperty('--theme-glow', 'rgba(56, 189, 248, 0.4)');
+document.documentElement.style.setProperty('--theme-shadow', 'rgba(56, 189, 248, 0.3)');
+document.documentElement.style.setProperty('--btn-bg', 'linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%)');
+document.documentElement.style.setProperty('--btn-shadow', '0 8px 22px rgba(14, 165, 233, 0.4)');
+document.documentElement.style.setProperty('--btn-hover-shadow', '0 12px 28px rgba(14, 165, 233, 0.6)');
+document.documentElement.style.setProperty('--card-line', 'linear-gradient(90deg, #38bdf8, #2563eb)');
+document.documentElement.style.setProperty('--admin-bg', 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)');
+document.documentElement.style.setProperty('--admin-hover-bg', 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)');
+document.documentElement.style.setProperty('--admin-border', 'rgba(56, 189, 248, 0.6)');
+document.documentElement.style.setProperty('--admin-shadow', '0 6px 20px rgba(14, 165, 233, 0.35)');
+document.documentElement.style.setProperty('--admin-hover-shadow', '0 10px 25px rgba(14, 165, 233, 0.6)');
 
-                    let oddVal, accVal, targetType;
+function switchCategory(category) {
+    currentCategory = category;
+    const btnCrash = document.getElementById("btnCrash");
+    const btnAviator = document.getElementById("btnAviator");
+    const appTitle = document.getElementById("appTitle");
+    const appSubtitle = document.getElementById("appSubtitle");
+    const inputLabelText = document.getElementById("inputLabelText");
+    const footerText = document.getElementById("footerText");
+    const statusText = document.getElementById("statusText");
+    const inputSectionBox = document.getElementById("inputSectionBox");
+    const matrixTargetText = document.getElementById("matrixTargetText");
 
-                    if (i === 1 || i === 3) {
-                        oddVal = (3.2 + (maxOddVal % 3.5) + Math.random() * 3.5).toFixed(2) + 'x';
-                        accVal = (97 + Math.random() * 2.5).toFixed(1) + '%';
-                        targetType = '3X+ VIP';
-                    } else {
-                        oddVal = (1.25 + Math.random() * 1.55).toFixed(2) + 'x';
-                        accVal = (91 + Math.random() * 5).toFixed(1) + '%';
-                        targetType = 'SAFE';
-                    }
+    // Reset inputs & signals on switch
+    document.getElementById("cashoutInput").value = "";
+    for(let i=1; i<=4; i++) {
+        document.getElementById(`sig${i}`).innerText = "--.--x";
+        document.getElementById(`time${i}`).innerText = "--:--:--";
+        document.getElementById(`conf${i}`).innerText = "Conf: --%";
+        document.getElementById(`card${i}`).classList.remove("pulse");
+        document.getElementById(`time${i}`).style.background = "";
+        document.getElementById(`time${i}`).style.borderColor = "";
+        document.getElementById(`time${i}`).style.color = "";
+    }
 
-                    document.getElementById(`odd${i}`).innerText = oddVal;
-                    document.getElementById(`acc${i}`).innerText = "Acc: " + accVal;
+    if (category === 'crash') {
+        btnCrash.className = "cat-btn active-crash";
+        btnAviator.className = "cat-btn";
+        
+        appTitle.innerText = "LAKSHAN SERVICE";
+        appSubtitle.innerText = "Neural Crash Multiplier System";
+        inputLabelText.innerText = "Select Platform & Enter Odds";
+        matrixTargetText.innerText = "Target: 3.00x+";
+        footerText.innerText = "Lakshan Service Crash Engine v8.0 • Secure Interface";
+        statusText.innerText = "Crash system active • Ready";
+        inputSectionBox.style.background = "rgba(14, 116, 144, 0.15)";
+        inputSectionBox.style.borderColor = "rgba(56, 189, 248, 0.25)";
+        statusText.style.background = "rgba(14, 116, 144, 0.2)";
+        statusText.style.borderColor = "rgba(56, 189, 248, 0.2)";
+        statusText.style.color = "#f0f9ff";
 
-                    currentSignalsData.push(`Slot #${i} [${timeFormatted}] - Target: ${oddVal} (${targetType}) Acc: ${accVal}`);
+        document.documentElement.style.setProperty('--theme-color', '#38bdf8');
+        document.documentElement.style.setProperty('--theme-glow', 'rgba(56, 189, 248, 0.4)');
+        document.documentElement.style.setProperty('--theme-shadow', 'rgba(56, 189, 248, 0.3)');
+        document.documentElement.style.setProperty('--btn-bg', 'linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%)');
+        document.documentElement.style.setProperty('--btn-shadow', '0 8px 22px rgba(14, 165, 233, 0.4)');
+        document.documentElement.style.setProperty('--btn-hover-shadow', '0 12px 28px rgba(14, 165, 233, 0.6)');
+        document.documentElement.style.setProperty('--card-line', 'linear-gradient(90deg, #38bdf8, #2563eb)');
+        
+        document.documentElement.style.setProperty('--admin-bg', 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)');
+        document.documentElement.style.setProperty('--admin-hover-bg', 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)');
+        document.documentElement.style.setProperty('--admin-border', 'rgba(56, 189, 248, 0.6)');
+        document.documentElement.style.setProperty('--admin-shadow', '0 6px 20px rgba(14, 165, 233, 0.35)');
+        document.documentElement.style.setProperty('--admin-hover-shadow', '0 10px 25px rgba(14, 165, 233, 0.6)');
 
-                    setTimeout((index) => {
-                        document.getElementById(`card${index}`).classList.add('active');
-                    }, i * 150, i);
-                }
-            }, 1000);
+        for(let i=1; i<=4; i++) {
+            let tEl = document.getElementById(`time${i}`);
+            tEl.style.background = "rgba(56, 189, 248, 0.15)";
+            tEl.style.borderColor = "rgba(56, 189, 248, 0.3)";
+            tEl.style.color = "#bae6fd";
         }
 
-        // Copy All Signals Function
-        function copyAllSignals() {
-            if (currentSignalsData.length === 0) {
-                alert("Please click 'GENERATE SIGNALS' first!");
-                return;
+    } else {
+        btnAviator.className = "cat-btn active-aviator";
+        btnCrash.className = "cat-btn";
+        
+        appTitle.innerText = "LAKSHAN SERVICE";
+        appSubtitle.innerText = "Spribe Radar Algorithm System";
+        inputLabelText.innerText = "Select Platform & Enter Multiplier";
+        matrixTargetText.innerText = "Target: 2.50x+";
+        footerText.innerText = "Lakshan Service Aviator Radar v8.0 • Secure Interface";
+        statusText.innerText = "Aviator system active • Ready";
+        inputSectionBox.style.background = "rgba(225, 29, 72, 0.12)";
+        inputSectionBox.style.borderColor = "rgba(244, 63, 94, 0.3)";
+        statusText.style.background = "rgba(225, 29, 72, 0.15)";
+        statusText.style.borderColor = "rgba(244, 63, 94, 0.25)";
+        statusText.style.color = "#ffe4e6";
+
+        document.documentElement.style.setProperty('--theme-color', '#fb7185');
+        document.documentElement.style.setProperty('--theme-glow', 'rgba(244, 63, 94, 0.45)');
+        document.documentElement.style.setProperty('--theme-shadow', 'rgba(244, 63, 94, 0.35)');
+        document.documentElement.style.setProperty('--btn-bg', 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)');
+        document.documentElement.style.setProperty('--btn-shadow', '0 8px 22px rgba(244, 63, 94, 0.4)');
+        document.documentElement.style.setProperty('--btn-hover-shadow', '0 12px 28px rgba(244, 63, 94, 0.6)');
+        document.documentElement.style.setProperty('--card-line', 'linear-gradient(90deg, #f43f5e, #e11d48)');
+
+        document.documentElement.style.setProperty('--admin-bg', 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)');
+        document.documentElement.style.setProperty('--admin-hover-bg', 'linear-gradient(135deg, #fb7185 0%, #f43f5e 100%)');
+        document.documentElement.style.setProperty('--admin-border', 'rgba(244, 63, 94, 0.6)');
+        document.documentElement.style.setProperty('--admin-shadow', '0 6px 20px rgba(244, 63, 94, 0.4)');
+        document.documentElement.style.setProperty('--admin-hover-shadow', '0 10px 25px rgba(244, 63, 94, 0.6)');
+
+        for(let i=1; i<=4; i++) {
+            let tEl = document.getElementById(`time${i}`);
+            tEl.style.background = "rgba(244, 63, 94, 0.15)";
+            tEl.style.borderColor = "rgba(244, 63, 94, 0.3)";
+            tEl.style.color = "#fecdd3";
+        }
+    }
+}
+
+function generateSignals() {
+    const inputVal = document.getElementById("cashoutInput").value;
+    const selectedPlatform = document.getElementById("bettingPlatformSelect").value;
+    const statusText = document.getElementById("statusText");
+
+    if (!inputVal || inputVal <= 0) {
+        statusText.innerText = "⚠️ කරුණාකර නිවැරදි අගයක් ඇතුළත් කරන්න!";
+        return;
+    }
+
+    statusText.innerText = currentCategory === 'crash' ? `Computing crash algorithms for ${selectedPlatform}...` : `Scanning Spribe radar patterns for ${selectedPlatform}...`;
+
+    for(let i=1; i<=4; i++) {
+        document.getElementById(`sig${i}`).innerText = "...";
+        document.getElementById(`time${i}`).innerText = "--:--:--";
+        document.getElementById(`conf${i}`).innerText = "Computing...";
+        document.getElementById(`card${i}`).classList.remove("pulse");
+    }
+
+    setTimeout(() => {
+        const baseOdds = parseFloat(inputVal);
+        const now = new Date();
+
+        for (let i = 1; i <= 4; i++) {
+            let randomMultiplier;
+            if (currentCategory === 'crash') {
+                randomMultiplier = 3.0 + (Math.random() * 6.5) + ((baseOdds * 0.05) * ((i % 2 === 0) ? 1 : -0.5));
+            } else {
+                randomMultiplier = 2.5 + (Math.random() * 5.0) + ((baseOdds * 0.04) * ((i % 2 === 0) ? 1 : -0.4));
             }
+            randomMultiplier = parseFloat(randomMultiplier.toFixed(2));
+            
+            let confidence = Math.floor(82 + Math.random() * 18);
+            let signalTime = new Date(now.getTime() + (i * 30000));
+            let timeString = signalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            const platform = document.getElementById('gamePlatform').value.toUpperCase();
-            let textToCopy = `🔥 LAKSHAN SERVICE - ${platform} SIGNALS 🔥\n\n` + currentSignalsData.join('\n') + `\n\n📌 Join Official WhatsApp Channel for more!`;
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert("✅ All Signals Copied Successfully!");
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
+            document.getElementById(`sig${i}`).innerText = randomMultiplier + "x";
+            document.getElementById(`time${i}`).innerText = timeString;
+            document.getElementById(`conf${i}`).innerText = "Conf: " + confidence + "%";
+            document.getElementById(`card${i}`).classList.add("pulse");
         }
-    </script>
+
+        statusText.innerText = `✨ ${selectedPlatform} සඳහා සිග්නල් 4 සහ වේලාවන් සාර්ථකව ජනනය විය!`;
+    }, 800);
+}
+
+function copySignals() {
+    const statusText = document.getElementById("statusText");
+    const selectedPlatform = document.getElementById("bettingPlatformSelect").value;
+    const promoCode = document.getElementById("promoCodeVal").innerText;
+    const sig1 = document.getElementById("sig1").innerText;
+    const time1 = document.getElementById("time1").innerText;
+    const conf1 = document.getElementById("conf1").innerText;
+
+    const sig2 = document.getElementById("sig2").innerText;
+    const time2 = document.getElementById("time2").innerText;
+    const conf2 = document.getElementById("conf2").innerText;
+
+    const sig3 = document.getElementById("sig3").innerText;
+    const time3 = document.getElementById("time3").innerText;
+    const conf3 = document.getElementById("conf3").innerText;
+
+    const sig4 = document.getElementById("sig4").innerText;
+    const time4 = document.getElementById("time4").innerText;
+    const conf4 = document.getElementById("conf4").innerText;
+
+    if (sig1 === "--.--x" || sig1 === "...") {
+        statusText.innerText = "⚠️ කරුණාකර පළමුව සිග්නල් ජනනය කරගන්න!";
+        return;
+    }
+
+    const titleText = currentCategory === 'crash' ? `🚀 LAKSHAN SERVICE - ${selectedPlatform.toUpperCase()} CRASH SIGNALS 🚀` : `✈️ LAKSHAN SERVICE - ${selectedPlatform.toUpperCase()} AVIATOR SIGNALS ✈️`;
+
+    const textToCopy = `${titleText}
+🎁 Promo Code: ${promoCode}
+-----------------------------------
+🎯 Signal 01 | Time: ${time1} | Target: ${sig1} | ${conf1}
+🎯 Signal 02 | Time: ${time2} | Target: ${sig2} | ${conf2}
+🎯 Signal 03 | Time: ${time3} | Target: ${sig3} | ${conf3}
+🎯 Signal 04 | Time: ${time4} | Target: ${sig4} | ${conf4}
+-----------------------------------
+⚡ Powered by Lakshan Service`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            statusText.innerText = "📋 සිග්නල් සාර්ථකව කොපි කරගන්නා ලදී!";
+        }).catch(() => {
+            fallbackCopyTextToClipboard(textToCopy, statusText);
+        });
+    } else {
+        fallbackCopyTextToClipboard(textToCopy, statusText);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, statusEl) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            statusEl.innerText = "📋 සිග්නල් සාර්ථකව කොපි කරගන්නා ලදී!";
+        } else {
+            statusEl.innerText = "❌ කොපි කිරීම අසාර්ථකයි!";
+        }
+    } catch (err) {
+        statusEl.innerText = "❌ කොපි කිරීම අසාර්ථකයි!";
+    }
+
+    document.body.removeChild(textArea);
+}
+</script>
+
 </body>
 </html>
